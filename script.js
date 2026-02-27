@@ -22,9 +22,19 @@ let provaAtual = [];
 let indiceAtual = 0;
 let acertos = 0;
 
+let audioAtual = null;
+
 function tocarAudio(caminho) {
-  const audio = new Audio(caminho);
-  audio.play();
+
+  
+  if (audioAtual) {
+    audioAtual.pause();
+    audioAtual.currentTime = 0;
+  }
+
+  
+  audioAtual = new Audio(caminho);
+  audioAtual.play();
 }
 
 function embaralhar(array) {
