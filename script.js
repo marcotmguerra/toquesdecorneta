@@ -92,14 +92,14 @@ function mostrarResposta() {
   conteudo.innerHTML = `
     <div class="card prova-card">
       <h2>${toque.nome}</h2>
-      <p>Você acertou?</p>
+      <p>Marque seu resultado abaixo</p>
       <br>
       <button class="btn-primary" onclick="responder(true)">
-        ✅ Acertou!
+        ✅ Acertei!
       </button>
       <br><br>
       <button class="btn-primary" onclick="responder(false)">
-        ❌ Errou!
+        ❌ Errei!
       </button>
     </div>
   `;
