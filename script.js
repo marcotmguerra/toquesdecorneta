@@ -1,19 +1,19 @@
 const toques = [
   { id: 1, nome: "Sentido", audio: "audios/sentido.aac" },
-  { id: 2, nome: "Descansar", audio: "audios/descansar.mp3" },
-  { id: 3, nome: "Apresentar Arma", audio: "audios/apresentar-arma.mp3" },
-  { id: 4, nome: "Direita volver", audio: "audios/direita-volver.mp3" },
-  { id: 5, nome: "Esquerda volver", audio: "audios/esquerda-volver.mp3" },
-  { id: 6, nome: "Meia volta volver", audio: "audios/meia-volta.mp3" },
-  { id: 7, nome: "Ombro arma", audio: "audios/ombro-arma.mp3" },
-  { id: 8, nome: "Descansar arma", audio: "audios/descansar-arma.mp3" },
-  { id: 9, nome: "Cruzar arma", audio: "audios/cruzar-arma.mp3" },
-  { id: 10, nome: "Ordinário marche", audio: "audios/ordinario-marche.mp3" },
-  { id: 11, nome: "Cobrir", audio: "audios/cobrir.mp3" },
-  { id: 12, nome: "Firme", audio: "audios/firme.mp3" },
+  { id: 2, nome: "Descansar", audio: "audios/descansar.aac" },
+  { id: 3, nome: "Apresentar Arma", audio: "audios/apresentar-arma.aac" },
+  { id: 4, nome: "Direita volver", audio: "audios/direita-volver.aac" },
+  { id: 5, nome: "Esquerda volver", audio: "audios/esquerda-volver.aac" },
+  { id: 6, nome: "Meia volta volver", audio: "audios/meia-volta.aac" },
+  { id: 7, nome: "Ombro arma", audio: "audios/ombro-arma.aac" },
+  { id: 8, nome: "Descansar arma", audio: "audios/descansar-arma.aac" },
+  { id: 9, nome: "Cruzar arma", audio: "audios/cruzar-arma.aac" },
+  { id: 10, nome: "Ordinário marche", audio: "audios/ordinario-marche.aac" },
+  { id: 11, nome: "Cobrir", audio: "audios/cobrir.aac" },
+  { id: 12, nome: "Firme", audio: "audios/firme.aac" },
   { id: 13, nome: "Alto", audio: "audios/alto.mp3" },
-  { id: 14, nome: "Olhar a direita", audio: "audios/olhar-direita.mp3" },
-  { id: 15, nome: "Olhar frente", audio: "audios/olhar-frente.mp3" }
+  { id: 14, nome: "Olhar a direita", audio: "audios/olhar-direita.aac" },
+  { id: 15, nome: "Olhar frente", audio: "audios/olhar-frente.aac" }
 ];
 
 const conteudo = document.getElementById("conteudo");
