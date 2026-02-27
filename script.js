@@ -55,7 +55,7 @@ function mostrarLista() {
         <div class="card-icon">🎺</div>
         <div class="card-text">
           <h2>${t.nome}</h2>
-          <p>Treinamento CEFS • Áudio Oficial</p>
+          <p>CEFS A 2026 - Pel Delta</p>
         </div>
       </div>
 
