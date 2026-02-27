@@ -95,11 +95,11 @@ function mostrarResposta() {
       <p>Você acertou?</p>
       <br>
       <button class="btn-primary" onclick="responder(true)">
-        ✅ Acertei
+        ✅ Acertou!
       </button>
       <br><br>
       <button class="btn-primary" onclick="responder(false)">
-        ❌ Errei
+        ❌ Errou!
       </button>
     </div>
   `;
