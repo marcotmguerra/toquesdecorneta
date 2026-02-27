@@ -1,10 +1,10 @@
 {
-  "name": "Toques CEFS",
+  "name": "Toques de corneta CEFS",
   "short_name": "CEFS",
   "start_url": "index.html",
   "display": "standalone",
-  "background_color": "#F5F5F7",
-  "theme_color": "#000000",
+  "background_color": "#f2f2f7",
+  "theme_color": "#3b5bff",
   "icons": [
     {
       "src": "icon-192.png",
