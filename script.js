@@ -18,48 +18,123 @@ const toques = [
 
 const conteudo = document.getElementById("conteudo");
 
-function tocarAudio(event, caminho) {
-  event.stopPropagation();
+let provaAtual = [];
+let indiceAtual = 0;
+let acertos = 0;
+
+function tocarAudio(caminho) {
   const audio = new Audio(caminho);
   audio.play();
 }
 
-function criarCard(toque, mostrarNome = false) {
-  const card = document.createElement("div");
-  card.className = "card";
-
-  card.innerHTML = `
-    <h2>${mostrarNome ? toque.nome : "Toque " + toque.id}</h2>
-    <button onclick="tocarAudio(event, '${toque.audio}')">▶ Ouvir</button>
-  `;
-
-  card.addEventListener("click", () => {
-    card.classList.toggle("virado");
-    card.querySelector("h2").textContent =
-      card.classList.contains("virado")
-        ? toque.nome
-        : "Toque " + toque.id;
-  });
-
-  return card;
+function embaralhar(array) {
+  return [...array].sort(() => 0.5 - Math.random());
 }
+
+/* =========================
+   LISTA ESTILO APP
+========================= */
 
 function mostrarLista() {
   conteudo.innerHTML = "";
+
   toques.forEach(t => {
-    conteudo.appendChild(criarCard(t, true));
+    const card = document.createElement("div");
+    card.className = "card";
+
+    card.innerHTML = `
+      <div class="card-top">
+        <div class="card-icon">🎺</div>
+        <div class="card-text">
+          <h2>${t.nome}</h2>
+          <p>Treinamento CEFS • Áudio Oficial</p>
+        </div>
+      </div>
+
+      <div class="card-actions">
+        <button class="btn-primary" onclick="tocarAudio('${t.audio}')">
+          ▶ Ouvir
+        </button>
+      </div>
+    `;
+
+    conteudo.appendChild(card);
   });
 }
 
-function iniciarSimulado() {
-  conteudo.innerHTML = "";
+/* =========================
+   PROVA REAL (flashcard mantido)
+========================= */
 
-  const embaralhado = [...toques].sort(() => 0.5 - Math.random());
-  const selecionados = embaralhado.slice(0, 10);
+function iniciarProva() {
+  provaAtual = embaralhar(toques).slice(0, 10);
+  indiceAtual = 0;
+  acertos = 0;
+  mostrarQuestao();
+}
 
-  selecionados.forEach(t => {
-    conteudo.appendChild(criarCard(t));
-  });
+function mostrarQuestao() {
+  const toque = provaAtual[indiceAtual];
+
+  conteudo.innerHTML = `
+    <div class="card prova-card">
+      <h2>Questão ${indiceAtual + 1} de 10</h2>
+      <button class="btn-primary" onclick="tocarAudio('${toque.audio}')">
+        ▶ Ouvir Toque
+      </button>
+      <br><br>
+      <button class="btn-primary" onclick="mostrarResposta()">
+        Mostrar Resposta
+      </button>
+    </div>
+  `;
+}
+
+function mostrarResposta() {
+  const toque = provaAtual[indiceAtual];
+
+  conteudo.innerHTML = `
+    <div class="card prova-card">
+      <h2>${toque.nome}</h2>
+      <p>Você acertou?</p>
+      <br>
+      <button class="btn-primary" onclick="responder(true)">
+        ✅ Acertei
+      </button>
+      <br><br>
+      <button class="btn-primary" onclick="responder(false)">
+        ❌ Errei
+      </button>
+    </div>
+  `;
+}
+
+function responder(acertou) {
+  if (acertou) acertos++;
+
+  indiceAtual++;
+
+  if (indiceAtual < provaAtual.length) {
+    mostrarQuestao();
+  } else {
+    mostrarResultado();
+  }
+}
+
+function mostrarResultado() {
+  const percentual = Math.round((acertos / 10) * 100);
+
+  conteudo.innerHTML = `
+    <div class="card prova-card">
+      <h2>Resultado Final</h2>
+      <p>${acertos} de 10</p>
+      <p>${percentual}% de aproveitamento</p>
+      <br>
+      <button class="btn-primary" onclick="iniciarProva()">
+        Refazer Prova
+      </button>
+    </div>
+  `;
 }
 
 mostrarLista();
