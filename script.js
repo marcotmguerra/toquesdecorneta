@@ -11,7 +11,7 @@ const toques = [
   { id: 10, nome: "Ordinário marche", audio: "audios/ordinario-marche.aac" },
   { id: 11, nome: "Cobrir", audio: "audios/cobrir.aac" },
   { id: 12, nome: "Firme", audio: "audios/firme.aac" },
-  { id: 13, nome: "Alto", audio: "audios/alto.mp3" },
+  { id: 13, nome: "Alto", audio: "audios/alto.aac" },
   { id: 14, nome: "Olhar a direita", audio: "audios/olhar-direita.aac" },
   { id: 15, nome: "Olhar frente", audio: "audios/olhar-frente.aac" }
 ];
