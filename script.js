@@ -1,19 +1,19 @@
 const toques = [
-  { id: 1, nome: "Toque 1", audio: "audios/toque1.mp3" },
-  { id: 2, nome: "Toque 2", audio: "audios/toque2.mp3" },
-  { id: 3, nome: "Toque 3", audio: "audios/toque3.mp3" },
-  { id: 4, nome: "Toque 4", audio: "audios/toque4.mp3" },
-  { id: 5, nome: "Toque 5", audio: "audios/toque5.mp3" },
-  { id: 6, nome: "Toque 6", audio: "audios/toque6.mp3" },
-  { id: 7, nome: "Toque 7", audio: "audios/toque7.mp3" },
-  { id: 8, nome: "Toque 8", audio: "audios/toque8.mp3" },
-  { id: 9, nome: "Toque 9", audio: "audios/toque9.mp3" },
-  { id: 10, nome: "Toque 10", audio: "audios/toque10.mp3" },
-  { id: 11, nome: "Toque 11", audio: "audios/toque11.mp3" },
-  { id: 12, nome: "Toque 12", audio: "audios/toque12.mp3" },
-  { id: 13, nome: "Toque 13", audio: "audios/toque13.mp3" },
-  { id: 14, nome: "Toque 14", audio: "audios/toque14.mp3" },
-  { id: 15, nome: "Toque 15", audio: "audios/toque15.mp3" }
+  { id: 1, nome: "Sentido", audio: "audios/toque1.mp3" },
+  { id: 2, nome: "Descansar", audio: "audios/toque2.mp3" },
+  { id: 3, nome: "Apresentar Arma", audio: "audios/toque3.mp3" },
+  { id: 4, nome: "Direita volver", audio: "audios/toque4.mp3" },
+  { id: 5, nome: "Esquerda volver", audio: "audios/toque5.mp3" },
+  { id: 6, nome: "Meia volta volver", audio: "audios/toque6.mp3" },
+  { id: 7, nome: "Ombro arma", audio: "audios/toque7.mp3" },
+  { id: 8, nome: "Descansar arma", audio: "audios/toque8.mp3" },
+  { id: 9, nome: "Cruzar arma", audio: "audios/toque9.mp3" },
+  { id: 10, nome: "Ordinário marche", audio: "audios/toque10.mp3" },
+  { id: 11, nome: "Cobrir", audio: "audios/toque11.mp3" },
+  { id: 12, nome: "Firme", audio: "audios/toque12.mp3" },
+  { id: 13, nome: "Alto", audio: "audios/toque13.mp3" },
+  { id: 14, nome: "Olhar a direita", audio: "audios/toque14.mp3" },
+  { id: 15, nome: "Olhar frente", audio: "audios/toque15.mp3" }
 ];
 
 const conteudo = document.getElementById("conteudo");
