@@ -1,5 +1,5 @@
 const toques = [
-  { id: 1, nome: "Sentido", audio: "audios/sentido.mp3" },
+  { id: 1, nome: "Sentido", audio: "audios/sentido.aac" },
   { id: 2, nome: "Descansar", audio: "audios/descansar.mp3" },
   { id: 3, nome: "Apresentar Arma", audio: "audios/apresentar-arma.mp3" },
   { id: 4, nome: "Direita volver", audio: "audios/direita-volver.mp3" },
