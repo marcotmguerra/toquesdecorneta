@@ -4,7 +4,7 @@ const toques = [
   { id: 3, nome: "Apresentar Arma", audio: "audios/apresentar-arma.aac" },
   { id: 4, nome: "Direita volver", audio: "audios/direita-volver.aac" },
   { id: 5, nome: "Esquerda volver", audio: "audios/esquerda-volver.aac" },
-  { id: 6, nome: "Meia volta volver", audio: "audios/meia-volta.aac" },
+  { id: 6, nome: "Meia volta volver", audio: "audios/meiavolta.aac" },
   { id: 7, nome: "Ombro arma", audio: "audios/ombro-arma.aac" },
   { id: 8, nome: "Descansar arma", audio: "audios/descansar-arma.aac" },
   { id: 9, nome: "Cruzar arma", audio: "audios/cruzar-arma.aac" },
