@@ -1,19 +1,19 @@
 const toques = [
-  { id: 1, nome: "Sentido", audio: "audios/toque1.mp3" },
-  { id: 2, nome: "Descansar", audio: "audios/toque2.mp3" },
-  { id: 3, nome: "Apresentar Arma", audio: "audios/toque3.mp3" },
-  { id: 4, nome: "Direita volver", audio: "audios/toque4.mp3" },
-  { id: 5, nome: "Esquerda volver", audio: "audios/toque5.mp3" },
-  { id: 6, nome: "Meia volta volver", audio: "audios/toque6.mp3" },
-  { id: 7, nome: "Ombro arma", audio: "audios/toque7.mp3" },
-  { id: 8, nome: "Descansar arma", audio: "audios/toque8.mp3" },
-  { id: 9, nome: "Cruzar arma", audio: "audios/toque9.mp3" },
-  { id: 10, nome: "Ordinário marche", audio: "audios/toque10.mp3" },
-  { id: 11, nome: "Cobrir", audio: "audios/toque11.mp3" },
-  { id: 12, nome: "Firme", audio: "audios/toque12.mp3" },
-  { id: 13, nome: "Alto", audio: "audios/toque13.mp3" },
-  { id: 14, nome: "Olhar a direita", audio: "audios/toque14.mp3" },
-  { id: 15, nome: "Olhar frente", audio: "audios/toque15.mp3" }
+  { id: 1, nome: "Sentido", audio: "audios/sentido.mp3" },
+  { id: 2, nome: "Descansar", audio: "audios/descansar.mp3" },
+  { id: 3, nome: "Apresentar Arma", audio: "audios/apresentar-arma.mp3" },
+  { id: 4, nome: "Direita volver", audio: "audios/direita-volver.mp3" },
+  { id: 5, nome: "Esquerda volver", audio: "audios/esquerda-volver.mp3" },
+  { id: 6, nome: "Meia volta volver", audio: "audios/meia-volta.mp3" },
+  { id: 7, nome: "Ombro arma", audio: "audios/ombro-arma.mp3" },
+  { id: 8, nome: "Descansar arma", audio: "audios/descansar-arma.mp3" },
+  { id: 9, nome: "Cruzar arma", audio: "audios/cruzar-arma.mp3" },
+  { id: 10, nome: "Ordinário marche", audio: "audios/ordinario-marche.mp3" },
+  { id: 11, nome: "Cobrir", audio: "audios/cobrir.mp3" },
+  { id: 12, nome: "Firme", audio: "audios/firme.mp3" },
+  { id: 13, nome: "Alto", audio: "audios/alto.mp3" },
+  { id: 14, nome: "Olhar a direita", audio: "audios/olhar-direita.mp3" },
+  { id: 15, nome: "Olhar frente", audio: "audios/olhar-frente.mp3" }
 ];
 
 const conteudo = document.getElementById("conteudo");
