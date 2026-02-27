@@ -6,7 +6,7 @@
 }
 
 body {
-  background: #F5F5F7;
+  background: #f2f2f7;
   display: flex;
   justify-content: center;
 }
@@ -15,14 +15,20 @@ body {
   max-width: 500px;
   width: 100%;
   min-height: 100vh;
-  background: #F5F5F7;
   display: flex;
   flex-direction: column;
+  background: #f2f2f7;
 }
 
+/* HEADER */
+
 header {
+  position: sticky;
+  top: 0;
+  padding: 20px;
   text-align: center;
-  padding: 30px 20px 10px;
+  background: #f2f2f7;
+  z-index: 999;
 }
 
 header h1 {
@@ -30,62 +36,104 @@ header h1 {
   font-weight: 700;
 }
 
-header p {
-  color: #777;
-  font-size: 14px;
-}
+/* MAIN */
 
 main {
   flex: 1;
   padding: 20px;
+  padding-bottom: 100px;
 }
+
+/* CARD ESTILO APP */
 
 .card {
   background: white;
   border-radius: 20px;
-  padding: 25px;
-  margin-bottom: 20px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-  text-align: center;
-  cursor: pointer;
-  transition: transform 0.4s;
+  padding: 18px;
+  margin-bottom: 18px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+  transition: transform 0.2s ease;
 }
 
-.card h2 {
-  font-size: 18px;
-  margin-bottom: 15px;
+.card:active {
+  transform: scale(0.98);
 }
 
-.card button {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 30px;
-  background: black;
-  color: white;
+.card-top {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.card-icon {
+  width: 55px;
+  height: 55px;
+  background: #e9edff;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+}
+
+.card-text h2 {
+  font-size: 17px;
   font-weight: 600;
+}
+
+.card-text p {
+  font-size: 13px;
+  color: #888;
+  margin-top: 4px;
+}
+
+.card-actions {
+  margin-top: 15px;
+}
+
+.btn-primary {
+  width: 100%;
+  background: #3b5bff;
+  color: white;
+  border: none;
+  padding: 13px;
+  border-radius: 14px;
+  font-weight: 600;
+  font-size: 14px;
   cursor: pointer;
 }
 
-.card.virado {
-  background: #000;
-  color: white;
+/* PROVA */
+
+.prova-card {
+  text-align: center;
+  padding: 30px 20px;
 }
+
+.prova-card h2 {
+  margin-bottom: 20px;
+}
+
+/* MENU FIXO */
 
 .bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  max-width: 500px;
+  margin: auto;
+
   display: flex;
-  border-top: 1px solid #ddd;
+  height: 70px;
   background: white;
+  border-top: 1px solid #e5e5e5;
 }
 
 .bottom-nav button {
   flex: 1;
-  padding: 18px;
   border: none;
   background: white;
   font-weight: 600;
   cursor: pointer;
-}
-
-.bottom-nav button:hover {
-  background: #f0f0f0;
 }
