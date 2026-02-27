@@ -1,0 +1,91 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  background: #F5F5F7;
+  display: flex;
+  justify-content: center;
+}
+
+.app {
+  max-width: 500px;
+  width: 100%;
+  min-height: 100vh;
+  background: #F5F5F7;
+  display: flex;
+  flex-direction: column;
+}
+
+header {
+  text-align: center;
+  padding: 30px 20px 10px;
+}
+
+header h1 {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+header p {
+  color: #777;
+  font-size: 14px;
+}
+
+main {
+  flex: 1;
+  padding: 20px;
+}
+
+.card {
+  background: white;
+  border-radius: 20px;
+  padding: 25px;
+  margin-bottom: 20px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.4s;
+}
+
+.card h2 {
+  font-size: 18px;
+  margin-bottom: 15px;
+}
+
+.card button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 30px;
+  background: black;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.card.virado {
+  background: #000;
+  color: white;
+}
+
+.bottom-nav {
+  display: flex;
+  border-top: 1px solid #ddd;
+  background: white;
+}
+
+.bottom-nav button {
+  flex: 1;
+  padding: 18px;
+  border: none;
+  background: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.bottom-nav button:hover {
+  background: #f0f0f0;
+}
