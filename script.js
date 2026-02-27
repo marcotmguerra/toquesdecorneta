@@ -31,9 +31,7 @@ function embaralhar(array) {
   return [...array].sort(() => 0.5 - Math.random());
 }
 
-/* =========================
-   LISTA ESTILO APP
-========================= */
+/*LISTA */
 
 function mostrarLista() {
   conteudo.innerHTML = "";
@@ -62,9 +60,7 @@ function mostrarLista() {
   });
 }
 
-/* =========================
-   PROVA REAL (flashcard mantido)
-========================= */
+/* PROVA */
 
 function iniciarProva() {
   provaAtual = embaralhar(toques).slice(0, 10);
