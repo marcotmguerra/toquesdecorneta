@@ -159,3 +159,71 @@ mostrarLista();
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("sw.js");
 }
+
+let deferredPrompt;
+
+const installToast = document.getElementById("installToast");
+const btnInstall = document.getElementById("btnInstall");
+const btnClose = document.getElementById("btnClose");
+
+// Detecta se pode instarl o PWA
+window.addEventListener("beforeinstallprompt", (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+
+  // toast
+  installToast.classList.remove("hidden");
+});
+
+// Botão instalar
+btnInstall.addEventListener("click", async () => {
+  installToast.classList.add("hidden");
+
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    await deferredPrompt.userChoice;
+    deferredPrompt = null;
+  }
+});
+
+// Botão fechar
+btnClose.addEventListener("click", () => {
+  installToast.classList.add("hidden");
+});
+
+function isIOS() {
+  return /iphone|ipad|ipod/i.test(window.navigator.userAgent);
+}
+
+function isInStandaloneMode() {
+  return ('standalone' in window.navigator) && (window.navigator.standalone);
+}
+
+window.addEventListener("load", () => {
+
+  // Se for iPhone e não estiver instalado
+  if (isIOS() && !isInStandaloneMode()) {
+
+    const installToast = document.getElementById("installToast");
+
+    installToast.innerHTML = `
+      <div class="toast-content">
+        <strong>Instale o app no seu iPhone</strong>
+        <p>
+          Toque no botão <b>Compartilhar</b> (⬆️) no Safari
+          e selecione <b>Adicionar à Tela de Início</b>.
+        </p>
+        <div class="toast-buttons">
+          <button id="btnCloseIOS">Entendi</button>
+        </div>
+      </div>
+    `;
+
+    installToast.classList.remove("hidden");
+
+    document.getElementById("btnCloseIOS")
+      .addEventListener("click", () => {
+        installToast.classList.add("hidden");
+      });
+  }
+});

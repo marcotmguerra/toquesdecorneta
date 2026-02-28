@@ -137,3 +137,63 @@ main {
   font-weight: 600;
   cursor: pointer;
 }
+
+.install-toast {
+  position: fixed;
+  bottom: 90px; 
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 460px;
+
+  background: white;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+
+  z-index: 2000;
+  animation: slideUp 0.3s ease;
+}
+
+.hidden {
+  display: none;
+}
+
+.toast-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.toast-content p {
+  font-size: 13px;
+  color: #666;
+}
+
+.toast-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.toast-buttons button {
+  flex: 1;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+#btnInstall {
+  background: #3b5bff;
+  color: white;
+}
+
+#btnClose {
+  background: #f0f2f5;
+}
+
+@keyframes slideUp {
+  from { transform: translate(-50%, 30px); opacity: 0; }
+  to { transform: translate(-50%, 0); opacity: 1; }
+}
