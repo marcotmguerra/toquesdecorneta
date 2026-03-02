@@ -1,19 +1,19 @@
 const toques = [
-  { id: 1, nome: "Sentido", audio: "audios/sentido.aac" },
-  { id: 2, nome: "Descansar", audio: "audios/descansar.aac" },
-  { id: 3, nome: "Apresentar Arma", audio: "audios/apresentar-arma.aac" },
-  { id: 4, nome: "Direita volver", audio: "audios/direita-volver.aac" },
-  { id: 5, nome: "Esquerda volver", audio: "audios/esquerda-volver.aac" },
-  { id: 6, nome: "Meia volta volver", audio: "audios/meiavolta.aac" },
-  { id: 7, nome: "Ombro arma", audio: "audios/ombro-arma.aac" },
-  { id: 8, nome: "Descansar arma", audio: "audios/descansar-arma.aac" },
-  { id: 9, nome: "Cruzar arma", audio: "audios/cruzar-arma.aac" },
-  { id: 10, nome: "Ordinário marche", audio: "audios/ordinario-marche.aac" },
-  { id: 11, nome: "Cobrir", audio: "audios/cobrir.aac" },
-  { id: 12, nome: "Firme", audio: "audios/firme.aac" },
-  { id: 13, nome: "Alto", audio: "audios/alto.aac" },
-  { id: 14, nome: "Olhar a direita", audio: "audios/olhar-direita.aac" },
-  { id: 15, nome: "Olhar frente", audio: "audios/olhar-frente.aac" }
+  { id: 1, nome: "Sentido", audio: "audios/sentido.aac", bizu:"Aluno só fica em sentido"  },
+  { id: 2, nome: "Descansar", audio: "audios/descansar.aac", bizu: "Des-can-sar" },
+  { id: 3, nome: "Apresentar Arma", audio: "audios/apresentar-arma.aac", bizu: "Trás, trás, trás sua irmã pra mim!" },
+  { id: 4, nome: "Direita volver", audio: "audios/direita-volver.aac", bizu: "Ooolha...ali!" },
+  { id: 5, nome: "Esquerda volver", audio: "audios/esquerda-volver.aac", bizu: "Olha, olha, olha... ali!" },
+  { id: 6, nome: "Meia volta volver", audio: "audios/meiavolta.aac", bizu: "Nunca vi mulher solteira... pari" },
+  { id: 7, nome: "Ombro arma", audio: "audios/ombro-arma.aac", bizu: "Faz ombro arma" },
+  { id: 8, nome: "Descansar arma", audio: "audios/descansar-arma.aac", bizu: "Descansar... arma!" },
+  { id: 9, nome: "Cruzar arma", audio: "audios/cruzar-arma.aac", bizu:"Cruzar, cruzar, cruzar!" },
+  { id: 10, nome: "Ordinário marche", audio: "audios/ordinario-marche.aac", bizu: "" },
+  { id: 11, nome: "Cobrir", audio: "audios/cobrir.aac", bizu: "Aluno nunca prestou!" },
+  { id: 12, nome: "Firme", audio: "audios/firme.aac", bizu: "Ai meu Deus que dor!" },
+  { id: 13, nome: "Alto", audio: "audios/alto.aac", bizu: "Faz alto!" },
+  { id: 14, nome: "Olhar a direita", audio: "audios/olhar-direita.aac", bizu: "" },
+  { id: 15, nome: "Olhar frente", audio: "audios/olhar-frente.aac", bizu: "Em frente vamos olhar!" }
 ];
 
 const conteudo = document.getElementById("conteudo");
@@ -55,6 +55,7 @@ function mostrarLista() {
         <div class="card-icon">🎺</div>
         <div class="card-text">
           <h2>${t.nome}</h2>
+          <small>${t.bizu}</small>
           <p>CEFS A 2026 - Pelotão Delta</p>
         </div>
       </div>
@@ -102,6 +103,13 @@ function mostrarResposta() {
   conteudo.innerHTML = `
     <div class="card prova-card">
       <h2>${toque.nome}</h2>
+      
+      <div class="bizu-prova">
+      <strong>Bizu:</strong>
+        ${toque.bizu}
+      </div>
+
+      <br>
 
       <button class="btn-primary" 
               onclick="tocarAudio('${toque.audio}')">

@@ -197,3 +197,36 @@ main {
   from { transform: translate(-50%, 30px); opacity: 0; }
   to { transform: translate(-50%, 0); opacity: 1; }
 }
+
+.card-text small {
+  display: block;
+  margin-top: 6px;
+  font-size: 12px;
+  color: #666;
+  font-style: italic;
+}
+
+.bizu-prova {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #555;
+  font-style: italic;
+}
+
+.bizu-label {
+  display: block;
+  margin-top: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #3b5bff;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.bizu-text {
+  font-size: 13px;
+  color: #666;
+  font-style: italic;
+  margin-top: 4px;
+}
+
