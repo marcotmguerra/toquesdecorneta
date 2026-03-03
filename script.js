@@ -9,7 +9,7 @@ const toques = [
   { id: 8, nome: "Descansar arma", audio: "audios/descansar-arma.aac", bizu: "Descansar... arma!" },
   { id: 9, nome: "Cruzar arma", audio: "audios/cruzar-arma.aac", bizu:"Cruzar, cruzar, cruzar!" },
   { id: 10, nome: "Ordinário marche", audio: "audios/ordinario-marche.aac", bizu: "" },
-  { id: 11, nome: "Cobrir", audio: "audios/cobrir.aac", bizu: "Aluno nunca prestou!" },
+  { id: 11, nome: "Cobrir", audio: "audios/cobrir.aac", bizu: "Soldaaado vamos cobrir!" },
   { id: 12, nome: "Firme", audio: "audios/firme.aac", bizu: "Ai meu Deus que dor!" },
   { id: 13, nome: "Alto", audio: "audios/alto.aac", bizu: "Faz alto!" },
   { id: 14, nome: "Olhar a direita", audio: "audios/olhar-direita.aac", bizu: "" },
