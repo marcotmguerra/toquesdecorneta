@@ -162,6 +162,48 @@ function mostrarResultado() {
   `;
 }
 
+/* INFO */
+
+function mostrarInfo() {
+  conteudo.innerHTML = `
+    <div class="info-container">
+      <div class="info-header">
+        <h2>Informações</h2>
+      </div>
+      <br>
+      <!-- Foto do Pelotão (Horizontal) -->
+      <div class="foto-container">
+        <img src="/pelotao.jpg" alt="Pelotão Delta" class="foto-pelotao">
+      </div>
+
+      <div class="card info-card">
+        <h3>Sobre o App</h3>
+        <p>Este aplicativo foi desenvolvido para auxiliar os alunos do <strong>CEFS A 2026 - Pelotão Delta</strong> na memorização dos toques de corneta militares.</p>
+        <p>A prática através do simulado ajuda na fixação dos bizus e na agilidade de resposta durante as atividades e na prova.</p>
+      </div>
+
+      <div class="aviso-seguranca">
+        <div class="aviso-icon">⚠️</div>
+        <div>
+          <strong>Aviso de Estudo</strong>
+          <p>Esta ferramenta é para fins educacionais. Os toques seguem o padrão regulamentar, mas sempre consulte o instrutor do seu pelotão.</p>
+        </div>
+      </div>
+      
+      <div class="creditos">
+        <p>DESENVOLVIDO POR</p>
+        <div class="dev-info">
+          <strong>Pelotão Delta</strong>
+          <p>Versão 1.1.5 (2026)</p>
+        </div>
+        <div class="info-links">
+          <a href="https://wa.me/5531996338032?text=Olá! Tenho uma dúvida/sugestão sobre o App de Toques de Corneta." target="_blank">Suporte e sugestão</a> 
+        </div>
+      </div>
+    </div>
+  `;
+}
+
 mostrarLista();
 
 if ("serviceWorker" in navigator) {

@@ -230,3 +230,72 @@ main {
   margin-top: 4px;
 }
 
+
+/* Estilos para a aba Info */
+.info-container {
+  padding: 15px;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.foto-container {
+  width: 100%;
+  margin-bottom: 20px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.foto-pelotao {
+  width: 100%;
+  display: block;
+  object-fit: cover; /* Garante que a foto preencha o espaço sem distorcer */
+  aspect-ratio: 16 / 9; /* Força o formato horizontal */
+}
+
+.info-card {
+  text-align: left;
+  line-height: 1.5;
+  color: #333;
+}
+
+.aviso-seguranca {
+  background-color: #fff9e6;
+  border: 1px solid #ffeeba;
+  padding: 15px;
+  border-radius: 10px;
+  display: flex;
+  gap: 15px;
+  margin: 20px 0;
+  font-size: 0.9rem;
+  color: #856404;
+}
+
+.aviso-icon {
+  font-size: 1.5rem;
+}
+
+.creditos {
+  text-align: center;
+  margin-top: 40px;
+  padding-bottom: 40px;
+  color: #888;
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+}
+
+.dev-info {
+  margin: 10px 0;
+  color: #333;
+  font-size: 1rem;
+}
+
+.info-links a {
+  color: #007bff;
+  text-decoration: none;
+  margin: 0 5px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
