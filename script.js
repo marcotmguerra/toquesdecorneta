@@ -85,7 +85,7 @@ function mostrarQuestao() {
 
   conteudo.innerHTML = `
     <div class="card prova-card">
-      <h2>Questão ${indiceAtual + 1} de 10</h2>
+      <h2>Toque ${indiceAtual + 1} de 10</h2>
       <button class="btn-primary" onclick="tocarAudio('${toque.audio}')">
         ▶ Ouvir Toque
       </button>
