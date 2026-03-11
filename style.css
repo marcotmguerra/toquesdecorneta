@@ -248,8 +248,8 @@ main {
 .foto-pelotao {
   width: 100%;
   display: block;
-  object-fit: cover; /* Garante que a foto preencha o espaço sem distorcer */
-  aspect-ratio: 16 / 9; /* Força o formato horizontal */
+  object-fit: cover;
+  aspect-ratio: 16 / 9; 
 }
 
 .info-card {
