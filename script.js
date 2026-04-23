@@ -28,6 +28,19 @@ let botaoAtual = null;
 // --- ÁUDIO ---
 
 function tocarAudio(caminho, botao) {
+  // Clicou no botão que está tocando → parar
+  if (botaoAtual === botao && audioAtual && !audioAtual.paused) {
+    audioAtual.pause();
+    audioAtual.currentTime = 0;
+    audioAtual = null;
+    if (botao) {
+      botao.textContent = "▶ Reproduzir";
+      botao.disabled = false;
+    }
+    botaoAtual = null;
+    return;
+  }
+
   if (audioAtual) {
     audioAtual.pause();
     audioAtual.currentTime = 0;
@@ -49,8 +62,8 @@ function tocarAudio(caminho, botao) {
 
   function onReady() {
     if (botao) {
-      botao.textContent = "▶ Reproduzindo...";
-      botao.disabled = true;
+      botao.textContent = "⏹ Reproduzindo...";
+      botao.disabled = false;
     }
     audioAtual.play().catch(() => {
       if (botao) {
