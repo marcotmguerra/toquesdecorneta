@@ -8,7 +8,10 @@
   <link rel="manifest" href="manifest.json" />
   <link rel="stylesheet" href="style.css" />
 
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"></noscript>
 </head>
 <body>
 
@@ -20,10 +23,19 @@
 
     <main id="conteudo"></main>
 
-    <nav class="bottom-nav">
-      <button onclick="mostrarLista()">Toques</button>
-      <button onclick="iniciarProva()">Simulado</button>
-      <button onclick="mostrarInfo()">Informações</button>
+    <nav class="bottom-nav" role="navigation" aria-label="Menu principal">
+      <button data-aba="lista" onclick="navegarPara(mostrarLista)">
+        <span class="nav-icon">🎺</span>
+        <span class="nav-label">Toques</span>
+      </button>
+      <button data-aba="simulado" onclick="navegarPara(mostrarSimulado)">
+        <span class="nav-icon">📝</span>
+        <span class="nav-label">Simulado</span>
+      </button>
+      <button data-aba="info" onclick="navegarPara(mostrarInfo)">
+        <span class="nav-icon">ℹ️</span>
+        <span class="nav-label">Informações</span>
+      </button>
     </nav>
 
   </div>
