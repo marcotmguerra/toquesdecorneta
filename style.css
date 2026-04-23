@@ -83,7 +83,7 @@ main {
 
 .card-text p {
   font-size: 13px;
-  color: #888;
+  color: #666;
   margin-top: 4px;
 }
 
@@ -136,6 +136,29 @@ main {
   background: white;
   font-weight: 600;
   cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  color: #888;
+  transition: color 0.2s;
+  border-top: 2px solid transparent;
+}
+
+.bottom-nav button.ativo {
+  color: #3b5bff;
+  border-top-color: #3b5bff;
+}
+
+.nav-icon {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.nav-label {
+  font-size: 10px;
+  font-weight: 600;
 }
 
 .install-toast {
@@ -298,4 +321,103 @@ main {
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+/* BARRA DE PROGRESSO */
+
+.progress-bar {
+  height: 6px;
+  background: #e0e0e0;
+  border-radius: 3px;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: #3b5bff;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+/* RESULTADO COLORIDO */
+
+.resultado-placar {
+  padding: 20px;
+  border-radius: 14px;
+  margin: 10px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.resultado-otimo { background: #d4f0dc; color: #1a7a35; }
+.resultado-medio { background: #fff3cd; color: #7a5100; }
+.resultado-ruim  { background: #fde8e8; color: #8b1a1a; }
+
+.resultado-emoji    { font-size: 32px; }
+.resultado-numero   { font-size: 28px; font-weight: 700; }
+.resultado-percentual { font-size: 14px; }
+
+/* BOTÃO REVISAR ERROS */
+
+.btn-erros {
+  background: #ff6b35;
+}
+
+/* HISTÓRICO */
+
+.historico {
+  margin-top: 24px;
+  text-align: left;
+}
+
+.historico h3 {
+  font-size: 12px;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 10px;
+}
+
+.historico-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 13px;
+  color: #555;
+}
+
+/* SELEÇÃO DE QUESTÕES */
+
+.subtitulo-simulado {
+  color: #666;
+  margin-bottom: 20px;
+  margin-top: 8px;
+}
+
+.opcoes-simulado {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ESTADOS DE BOTÃO */
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-primary:not(:disabled):active {
+  transform: scale(0.97);
+}
+
+/* ACESSIBILIDADE — FOCO */
+
+button:focus-visible {
+  outline: 2px solid #3b5bff;
+  outline-offset: 2px;
 }
