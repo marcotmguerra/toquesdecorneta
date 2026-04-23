@@ -23,6 +23,7 @@ let indiceAtual = 0;
 let acertos = 0;
 let erros = [];
 let audioAtual = null;
+let botaoAtual = null;
 
 // --- ÁUDIO ---
 
@@ -32,7 +33,12 @@ function tocarAudio(caminho, botao) {
     audioAtual.currentTime = 0;
   }
 
-  const textoOriginal = botao ? botao.textContent.trim() : null;
+  if (botaoAtual && botaoAtual !== botao) {
+    botaoAtual.textContent = "▶ Reproduzir";
+    botaoAtual.disabled = false;
+  }
+
+  botaoAtual = botao || null;
 
   if (botao) {
     botao.textContent = "⏳ Carregando...";
@@ -43,19 +49,31 @@ function tocarAudio(caminho, botao) {
 
   function onReady() {
     if (botao) {
-      botao.textContent = textoOriginal;
-      botao.disabled = false;
+      botao.textContent = "▶ Reproduzindo...";
+      botao.disabled = true;
     }
     audioAtual.play().catch(() => {
-      if (botao) botao.textContent = textoOriginal;
+      if (botao) {
+        botao.textContent = "▶ Reproduzir";
+        botao.disabled = false;
+      }
     });
   }
+
+  audioAtual.addEventListener("ended", () => {
+    if (botao) {
+      botao.textContent = "▶ Reproduzir";
+      botao.disabled = false;
+    }
+    botaoAtual = null;
+  }, { once: true });
 
   audioAtual.addEventListener("error", () => {
     if (botao) {
       botao.disabled = false;
-      botao.textContent = textoOriginal;
+      botao.textContent = "▶ Reproduzir";
     }
+    botaoAtual = null;
     alert("Não foi possível carregar o áudio. Verifique sua conexão ou reinstale o app.");
   }, { once: true });
 
@@ -119,9 +137,9 @@ function mostrarLista() {
       </div>
       <div class="card-actions">
         <button class="btn-primary"
-                aria-label="Ouvir toque: ${t.nome}"
+                aria-label="Reproduzir toque: ${t.nome}"
                 onclick="tocarAudio('${t.audio}', this)">
-          ▶ Ouvir
+          ▶ Reproduzir
         </button>
       </div>
     `;
@@ -177,9 +195,9 @@ function mostrarQuestao() {
     <div class="card prova-card">
       <h2>Toque ${indiceAtual + 1} de ${total}</h2>
       <button class="btn-primary"
-              aria-label="Ouvir toque ${indiceAtual + 1} de ${total}"
+              aria-label="Reproduzir toque ${indiceAtual + 1} de ${total}"
               onclick="tocarAudio('${toque.audio}', this)">
-        ▶ Ouvir Toque
+        ▶ Reproduzir Toque
       </button>
       <br><br>
       <button class="btn-primary" onclick="mostrarResposta()">
@@ -208,9 +226,9 @@ function mostrarResposta() {
       <br>
 
       <button class="btn-primary"
-              aria-label="Ouvir novamente: ${toque.nome}"
+              aria-label="Reproduzir novamente: ${toque.nome}"
               onclick="tocarAudio('${toque.audio}', this)">
-        ▶ Ouvir Novamente
+        ▶ Reproduzir Novamente
       </button>
 
       <br><br>
