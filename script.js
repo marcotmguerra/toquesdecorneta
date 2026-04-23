@@ -27,16 +27,23 @@ let botaoAtual = null;
 
 // --- ÁUDIO ---
 
+function icon(nome) {
+  return `<i data-lucide="${nome}"></i>`;
+}
+
+function setBotao(botao, icone, texto, desabilitado) {
+  if (!botao) return;
+  botao.innerHTML = `${icon(icone)} ${texto}`;
+  botao.disabled = desabilitado;
+  lucide.createIcons();
+}
+
 function tocarAudio(caminho, botao) {
-  // Clicou no botão que está tocando → parar
   if (botaoAtual === botao && audioAtual && !audioAtual.paused) {
     audioAtual.pause();
     audioAtual.currentTime = 0;
     audioAtual = null;
-    if (botao) {
-      botao.textContent = "▶ Reproduzir";
-      botao.disabled = false;
-    }
+    setBotao(botao, "play", "Reproduzir", false);
     botaoAtual = null;
     return;
   }
@@ -47,45 +54,26 @@ function tocarAudio(caminho, botao) {
   }
 
   if (botaoAtual && botaoAtual !== botao) {
-    botaoAtual.textContent = "▶ Reproduzir";
-    botaoAtual.disabled = false;
+    setBotao(botaoAtual, "play", "Reproduzir", false);
   }
 
   botaoAtual = botao || null;
-
-  if (botao) {
-    botao.textContent = "⏳ Carregando...";
-    botao.disabled = true;
-  }
+  setBotao(botao, "loader-2", "Carregando...", true);
 
   audioAtual = new Audio(caminho);
 
   function onReady() {
-    if (botao) {
-      botao.textContent = "⏹ Reproduzindo...";
-      botao.disabled = false;
-    }
-    audioAtual.play().catch(() => {
-      if (botao) {
-        botao.textContent = "▶ Reproduzir";
-        botao.disabled = false;
-      }
-    });
+    setBotao(botao, "square", "Reproduzindo...", false);
+    audioAtual.play().catch(() => setBotao(botao, "play", "Reproduzir", false));
   }
 
   audioAtual.addEventListener("ended", () => {
-    if (botao) {
-      botao.textContent = "▶ Reproduzir";
-      botao.disabled = false;
-    }
+    setBotao(botao, "play", "Reproduzir", false);
     botaoAtual = null;
   }, { once: true });
 
   audioAtual.addEventListener("error", () => {
-    if (botao) {
-      botao.disabled = false;
-      botao.textContent = "▶ Reproduzir";
-    }
+    setBotao(botao, "play", "Reproduzir", false);
     botaoAtual = null;
     alert("Não foi possível carregar o áudio. Verifique sua conexão ou reinstale o app.");
   }, { once: true });
@@ -141,7 +129,7 @@ function mostrarLista() {
 
     card.innerHTML = `
       <div class="card-top">
-        <div class="card-icon">🎺</div>
+        <div class="card-icon"><i data-lucide="music-2"></i></div>
         <div class="card-text">
           <h2>${t.nome}</h2>
           <small>${t.bizu}</small>
@@ -152,13 +140,15 @@ function mostrarLista() {
         <button class="btn-primary"
                 aria-label="Reproduzir toque: ${t.nome}"
                 onclick="tocarAudio('${t.audio}', this)">
-          ▶ Reproduzir
+          <i data-lucide="play"></i> Reproduzir
         </button>
       </div>
     `;
 
     conteudo.appendChild(card);
   });
+
+  lucide.createIcons();
 }
 
 // --- SIMULADO ---
@@ -210,7 +200,7 @@ function mostrarQuestao() {
       <button class="btn-primary"
               aria-label="Reproduzir toque ${indiceAtual + 1} de ${total}"
               onclick="tocarAudio('${toque.audio}', this)">
-        ▶ Reproduzir Toque
+        <i data-lucide="play"></i> Reproduzir Toque
       </button>
       <br><br>
       <button class="btn-primary" onclick="mostrarResposta()">
@@ -218,6 +208,8 @@ function mostrarQuestao() {
       </button>
     </div>
   `;
+
+  lucide.createIcons();
 }
 
 function mostrarResposta() {
@@ -241,7 +233,7 @@ function mostrarResposta() {
       <button class="btn-primary"
               aria-label="Reproduzir novamente: ${toque.nome}"
               onclick="tocarAudio('${toque.audio}', this)">
-        ▶ Reproduzir Novamente
+        <i data-lucide="play"></i> Reproduzir Novamente
       </button>
 
       <br><br>
@@ -250,16 +242,18 @@ function mostrarResposta() {
       <br>
 
       <button class="btn-primary" onclick="responder(true)">
-        ✅ Acertei
+        <i data-lucide="check"></i> Acertei
       </button>
 
       <br><br>
 
       <button class="btn-primary" onclick="responder(false)">
-        ❌ Errei
+        <i data-lucide="x"></i> Errei
       </button>
     </div>
   `;
+
+  lucide.createIcons();
 }
 
 function responder(acertou) {
@@ -288,17 +282,21 @@ function mostrarResultado() {
                         : percentual >= 50 ? "resultado-medio"
                         : "resultado-ruim";
 
-  const emoji = percentual >= 80 ? "✅" : percentual >= 50 ? "⚠️" : "❌";
+  const iconeResultado = percentual >= 80
+    ? '<i data-lucide="check-circle"></i>'
+    : percentual >= 50
+    ? '<i data-lucide="alert-triangle"></i>'
+    : '<i data-lucide="x-circle"></i>';
 
   const btnErros = erros.length > 0
-    ? `<button class="btn-primary btn-erros" onclick="iniciarProvaComErros()">🔄 Revisar ${erros.length} erro(s)</button><br><br>`
+    ? `<button class="btn-primary btn-erros" onclick="iniciarProvaComErros()"><i data-lucide="rotate-cw"></i> Revisar ${erros.length} erro(s)</button><br><br>`
     : "";
 
   conteudo.innerHTML = `
     <div class="card prova-card">
       <h2>Resultado Final</h2>
       <div class="resultado-placar ${classeResultado}">
-        <span class="resultado-emoji">${emoji}</span>
+        <span class="resultado-emoji">${iconeResultado}</span>
         <span class="resultado-numero">${acertos}/${total}</span>
         <span class="resultado-percentual">${percentual}% de aproveitamento</span>
       </div>
@@ -310,6 +308,8 @@ function mostrarResultado() {
       ${renderHistorico()}
     </div>
   `;
+
+  lucide.createIcons();
 }
 
 function salvarResultado(acertos, total) {
@@ -362,7 +362,7 @@ function mostrarInfo() {
       </div>
 
       <div class="aviso-seguranca">
-        <div class="aviso-icon">⚠️</div>
+        <div class="aviso-icon"><i data-lucide="alert-triangle"></i></div>
         <div>
           <strong>Aviso de Estudo</strong>
           <p>Esta ferramenta é para fins educacionais. Os toques seguem o padrão regulamentar, mas sempre consulte o instrutor do seu pelotão.</p>
@@ -381,6 +381,8 @@ function mostrarInfo() {
       </div>
     </div>
   `;
+
+  lucide.createIcons();
 }
 
 // --- INIT ---
@@ -434,7 +436,7 @@ window.addEventListener("load", () => {
       <div class="toast-content">
         <strong>Instale o app no seu iPhone</strong>
         <p>
-          Toque no botão <b>Compartilhar</b> (⬆️) no Safari
+          Toque no botão <b>Compartilhar</b> no Safari
           e selecione <b>Adicionar à Tela de Início</b>.
         </p>
         <div class="toast-buttons">
