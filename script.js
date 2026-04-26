@@ -356,7 +356,6 @@ function navegarPara(destino) {
 function renderResumoProgresso() {
   const metricas = getMetricas();
   const praticados = toques.map(t => metricas[t.id]).filter(Boolean);
-  if (praticados.length === 0) return "";
 
   const counts = { aprendendo: 0, bom: 0, dominado: 0 };
   praticados.forEach(m => counts[m.dominio]++);
@@ -387,7 +386,7 @@ function renderResumoProgresso() {
 
 function mostrarLista() {
   setNavAtiva("lista");
-  conteudo.innerHTML = renderResumoProgresso();
+  conteudo.innerHTML = "";
 
   toques.forEach(t => {
     const m = getMetricaToque(t.id);
@@ -804,6 +803,8 @@ function mostrarInfo() {
              loading="lazy"
              decoding="async">
       </div>
+
+      ${renderResumoProgresso()}
 
       <div class="card info-card">
         <h3>Sobre o App</h3>
