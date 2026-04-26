@@ -25,6 +25,7 @@ let erros = [];
 let audioAtual = null;
 let botaoAtual = null;
 let modoAtual = 'classico'; // 'classico' | 'multipla'
+let audioCtx = null;
 
 // --- ÁUDIO ---
 
@@ -84,6 +85,69 @@ function tocarAudio(caminho, botao) {
   } else {
     audioAtual.addEventListener("canplay", onReady, { once: true });
   }
+}
+
+// --- CONFIGURAÇÕES ---
+
+function getConfig() {
+  return JSON.parse(localStorage.getItem("cefs-config") || '{"som":true,"haptico":true}');
+}
+
+function salvarConfig(config) {
+  localStorage.setItem("cefs-config", JSON.stringify(config));
+}
+
+function toggleConfig(chave) {
+  const config = getConfig();
+  config[chave] = !config[chave];
+  salvarConfig(config);
+}
+
+// --- FEEDBACK ---
+
+function getAudioCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  return audioCtx;
+}
+
+function tocarSomAcerto() {
+  if (!getConfig().som) return;
+  const ctx = getAudioCtx();
+  const t = ctx.currentTime;
+  [523, 784].forEach((freq, i) => {
+    const osc  = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(0.22, t + i * 0.11);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + i * 0.11 + 0.18);
+    osc.start(t + i * 0.11);
+    osc.stop(t + i * 0.11 + 0.18);
+  });
+}
+
+function tocarSomErro() {
+  if (!getConfig().som) return;
+  const ctx = getAudioCtx();
+  const t = ctx.currentTime;
+  const osc  = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  osc.type = 'triangle';
+  osc.frequency.setValueAtTime(260, t);
+  osc.frequency.exponentialRampToValueAtTime(160, t + 0.22);
+  gain.gain.setValueAtTime(0.2, t);
+  gain.gain.exponentialRampToValueAtTime(0.001, t + 0.28);
+  osc.start(t);
+  osc.stop(t + 0.28);
+}
+
+function vibrar(padrao) {
+  if (!getConfig().haptico) return;
+  if ('vibrate' in navigator) navigator.vibrate(padrao);
 }
 
 // --- MÉTRICAS ---
@@ -428,9 +492,13 @@ function responderMC(acertou, botaoClicado) {
   if (acertou) {
     botaoClicado.classList.add('opcao-correta');
     acertos++;
+    vibrar([40]);
+    tocarSomAcerto();
   } else {
     botaoClicado.classList.add('opcao-errada');
     erros.push(toque);
+    vibrar([80, 50, 80]);
+    tocarSomErro();
     todosOsBotoes.forEach(btn => {
       if (btn.dataset.correto === 'true') btn.classList.add('opcao-correta');
     });
@@ -513,8 +581,12 @@ function responder(acertou) {
   atualizarMetrica(toque.id, acertou);
   if (acertou) {
     acertos++;
+    vibrar([40]);
+    tocarSomAcerto();
   } else {
     erros.push(toque);
+    vibrar([80, 50, 80]);
+    tocarSomErro();
   }
 
   indiceAtual++;
@@ -652,6 +724,30 @@ function mostrarInfo() {
         <p>A prática através do simulado ajuda na fixação dos bizus e na agilidade de resposta durante as atividades e na prova.</p>
       </div>
 
+      <div class="card info-card config-card">
+        <h3>Configurações</h3>
+        <div class="toggle-row">
+          <div class="toggle-label">
+            <strong>Som</strong>
+            <small>Efeitos sonoros ao responder</small>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" ${getConfig().som ? 'checked' : ''} onchange="toggleConfig('som')">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-label">
+            <strong>Vibração</strong>
+            <small>Feedback háptico ao responder</small>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" ${getConfig().haptico ? 'checked' : ''} onchange="toggleConfig('haptico')">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+
       <div class="aviso-seguranca">
         <div class="aviso-icon"><i data-lucide="alert-triangle"></i></div>
         <div>
@@ -664,7 +760,7 @@ function mostrarInfo() {
         <p>DESENVOLVIDO POR</p>
         <div class="dev-info">
           <strong>Pelotão Delta</strong>
-          <p>Versão 1.6.0 (2026)</p>
+          <p>Versão 1.7.0 (2026)</p>
         </div>
         <div class="info-links">
           <a href="https://wa.me/5531996338032?text=Olá! Tenho uma dúvida/sugestão sobre o App de Toques de Corneta." target="_blank" rel="noopener noreferrer">Suporte e sugestão</a>
