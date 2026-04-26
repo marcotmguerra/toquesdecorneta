@@ -24,6 +24,7 @@ let acertos = 0;
 let erros = [];
 let audioAtual = null;
 let botaoAtual = null;
+let modoAtual = 'classico'; // 'classico' | 'multipla'
 
 // --- ÁUDIO ---
 
@@ -159,12 +160,42 @@ function mostrarSimulado() {
 
   conteudo.innerHTML = `
     <div class="card prova-card">
-      <h2>Simulado</h2>
+      <h2>Treino</h2>
+      <p class="subtitulo-simulado">Escolha o modo</p>
+      <div class="opcoes-simulado">
+        <button class="btn-modo" onclick="selecionarModo('classico')">
+          <i data-lucide="headphones"></i>
+          <div>
+            <strong>Modo Clássico</strong>
+            <span>Ouça e identifique o toque</span>
+          </div>
+        </button>
+        <button class="btn-modo" onclick="selecionarModo('multipla')">
+          <i data-lucide="list-checks"></i>
+          <div>
+            <strong>Múltipla Escolha</strong>
+            <span>Escolha entre 4 alternativas</span>
+          </div>
+        </button>
+      </div>
+    </div>
+  `;
+  lucide.createIcons();
+}
+
+function selecionarModo(modo) {
+  modoAtual = modo;
+  const titulo = modo === 'multipla' ? 'Múltipla Escolha' : 'Modo Clássico';
+
+  conteudo.innerHTML = `
+    <div class="card prova-card">
+      <h2>${titulo}</h2>
       <p class="subtitulo-simulado">Quantas questões?</p>
       <div class="opcoes-simulado">
         <button class="btn-primary" onclick="iniciarProva(5)">5 questões</button>
         <button class="btn-primary" onclick="iniciarProva(10)">10 questões</button>
         <button class="btn-primary" onclick="iniciarProva(${toques.length})">Todas (${toques.length})</button>
+        <button class="btn-secundario" onclick="mostrarSimulado()">← Voltar</button>
       </div>
     </div>
   `;
@@ -175,7 +206,7 @@ function iniciarProva(total) {
   indiceAtual = 0;
   acertos = 0;
   erros = [];
-  mostrarQuestao();
+  modoAtual === 'multipla' ? mostrarQuestaoMC() : mostrarQuestao();
 }
 
 function iniciarProvaComErros() {
@@ -183,7 +214,7 @@ function iniciarProvaComErros() {
   indiceAtual = 0;
   acertos = 0;
   erros = [];
-  mostrarQuestao();
+  modoAtual === 'multipla' ? mostrarQuestaoMC() : mostrarQuestao();
 }
 
 function mostrarQuestao() {
@@ -210,6 +241,76 @@ function mostrarQuestao() {
   `;
 
   lucide.createIcons();
+}
+
+function mostrarQuestaoMC() {
+  const toque = provaAtual[indiceAtual];
+  const total = provaAtual.length;
+  const progresso = (indiceAtual / total) * 100;
+
+  const erradas = embaralhar(toques.filter(t => t.id !== toque.id)).slice(0, 3);
+  const opcoes = embaralhar([toque, ...erradas]);
+
+  const opcoesHTML = opcoes.map(op => `
+    <button class="btn-opcao"
+            data-correto="${op.id === toque.id}"
+            onclick="responderMC(${op.id === toque.id}, this)">
+      ${op.nome}
+    </button>
+  `).join('');
+
+  conteudo.innerHTML = `
+    <div class="progress-bar">
+      <div class="progress-fill" style="width: ${progresso}%"></div>
+    </div>
+    <div class="card prova-card">
+      <p class="questao-label">Questão ${indiceAtual + 1} de ${total}</p>
+      <p class="questao-instrucao">Qual é este toque?</p>
+      <button class="btn-primary btn-audio-mc"
+              aria-label="Reproduzir toque ${indiceAtual + 1} de ${total}"
+              onclick="tocarAudio('${toque.audio}', this)">
+        <i data-lucide="play"></i> Ouvir Toque
+      </button>
+      <div class="opcoes-mc">
+        ${opcoesHTML}
+      </div>
+    </div>
+  `;
+
+  lucide.createIcons();
+}
+
+function responderMC(acertou, botaoClicado) {
+  const toque = provaAtual[indiceAtual];
+  const todosOsBotoes = document.querySelectorAll('.btn-opcao');
+  todosOsBotoes.forEach(btn => { btn.disabled = true; });
+
+  if (acertou) {
+    botaoClicado.classList.add('opcao-correta');
+    acertos++;
+  } else {
+    botaoClicado.classList.add('opcao-errada');
+    erros.push(toque);
+    todosOsBotoes.forEach(btn => {
+      if (btn.dataset.correto === 'true') btn.classList.add('opcao-correta');
+    });
+  }
+
+  if (audioAtual) {
+    audioAtual.pause();
+    audioAtual.currentTime = 0;
+    audioAtual = null;
+    botaoAtual = null;
+  }
+
+  setTimeout(() => {
+    indiceAtual++;
+    if (indiceAtual < provaAtual.length) {
+      mostrarQuestaoMC();
+    } else {
+      mostrarResultado();
+    }
+  }, 1300);
 }
 
 function mostrarResposta() {
@@ -373,7 +474,7 @@ function mostrarInfo() {
         <p>DESENVOLVIDO POR</p>
         <div class="dev-info">
           <strong>Pelotão Delta</strong>
-          <p>Versão 1.2.0 (2026)</p>
+          <p>Versão 1.3.0 (2026)</p>
         </div>
         <div class="info-links">
           <a href="https://wa.me/5531996338032?text=Olá! Tenho uma dúvida/sugestão sobre o App de Toques de Corneta." target="_blank" rel="noopener noreferrer">Suporte e sugestão</a>

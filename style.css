@@ -404,6 +404,128 @@ main {
   gap: 12px;
 }
 
+/* BOTÃO DE MODO */
+
+.btn-modo {
+  width: 100%;
+  background: white;
+  border: 2px solid #e0e0e0;
+  padding: 16px;
+  border-radius: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-align: left;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.btn-modo:hover {
+  border-color: #3b5bff;
+  background: #f0f3ff;
+}
+
+.btn-modo svg {
+  width: 26px;
+  height: 26px;
+  stroke: #3b5bff;
+  flex-shrink: 0;
+}
+
+.btn-modo strong {
+  display: block;
+  font-size: 15px;
+  color: #222;
+}
+
+.btn-modo span {
+  display: block;
+  font-size: 12px;
+  color: #888;
+  margin-top: 3px;
+}
+
+/* BOTÃO SECUNDÁRIO (Voltar) */
+
+.btn-secundario {
+  width: 100%;
+  background: #f0f2f5;
+  color: #555;
+  border: none;
+  padding: 13px;
+  border-radius: 14px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.btn-secundario:active {
+  transform: scale(0.97);
+}
+
+/* MÚLTIPLA ESCOLHA */
+
+.questao-label {
+  font-size: 11px;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 6px;
+}
+
+.questao-instrucao {
+  font-size: 19px;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 18px;
+}
+
+.btn-audio-mc {
+  margin-bottom: 6px;
+}
+
+.opcoes-mc {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.btn-opcao {
+  width: 100%;
+  background: white;
+  color: #333;
+  border: 2px solid #e0e0e0;
+  padding: 14px 16px;
+  border-radius: 14px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.btn-opcao:not(:disabled):hover {
+  border-color: #3b5bff;
+  background: #f0f3ff;
+}
+
+.btn-opcao:disabled {
+  cursor: not-allowed;
+}
+
+.opcao-correta {
+  background: #d4f0dc !important;
+  border-color: #1a7a35 !important;
+  color: #1a7a35 !important;
+}
+
+.opcao-errada {
+  background: #fde8e8 !important;
+  border-color: #c0392b !important;
+  color: #c0392b !important;
+}
+
 /* ESTADOS DE BOTÃO */
 
 .btn-primary:disabled {
