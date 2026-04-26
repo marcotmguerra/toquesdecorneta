@@ -484,6 +484,14 @@ main {
   color: var(--accent);
   white-space: nowrap;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.badge-srs svg {
+  width: 11px;
+  height: 11px;
 }
 
 /* ONBOARDING */
@@ -561,9 +569,13 @@ main {
 }
 
 .ob-icone {
-  font-size: 64px;
-  line-height: 1;
   margin-bottom: 22px;
+}
+
+.ob-icone svg {
+  width: 64px;
+  height: 64px;
+  color: var(--accent);
 }
 
 .ob-titulo {
@@ -635,9 +647,13 @@ main {
 }
 
 .conquista-icon {
-  font-size: 60px;
-  line-height: 1;
   margin-bottom: 10px;
+}
+
+.conquista-icon svg {
+  width: 60px;
+  height: 60px;
+  color: #f5a623;
 }
 
 .conquista-card h2 {
@@ -1004,6 +1020,14 @@ main {
   font-size: 11px;
   color: #d4570e;
   font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.metrica-sequencia svg {
+  width: 11px;
+  height: 11px;
 }
 
 /* RESUMO DE PROGRESSO */
