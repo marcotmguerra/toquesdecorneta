@@ -847,10 +847,11 @@ function mostrarInfo() {
         <p>DESENVOLVIDO POR</p>
         <div class="dev-info">
           <strong>Pelotão Delta</strong>
-          <p>Versão 1.8.0 (2026)</p>
+          <p>Versão 1.9.0 (2026)</p>
         </div>
         <div class="info-links">
           <a href="https://wa.me/5531996338032?text=Olá! Tenho uma dúvida/sugestão sobre o App de Toques de Corneta." target="_blank" rel="noopener noreferrer">Suporte e sugestão</a>
+          <a href="#" onclick="event.preventDefault(); localStorage.removeItem('cefs-onboarding'); mostrarOnboarding();">Ver introdução</a>
         </div>
       </div>
     </div>
@@ -859,9 +860,107 @@ function mostrarInfo() {
   lucide.createIcons();
 }
 
+// --- ONBOARDING ---
+
+const TELAS_ONBOARDING = [
+  {
+    icone: '🎺',
+    titulo: 'Bem-vindo ao\nToques de Corneta',
+    texto: 'Aprenda a identificar os <strong>15 toques militares</strong> do CEFS A 2026. Cada toque tem um <em>bizu</em> — uma frase que ajuda a memorizar o som.',
+    extra: '',
+  },
+  {
+    icone: '🧠',
+    titulo: 'Treino\ninteligente',
+    texto: 'O app usa <strong>repetição espaçada</strong>: toques que você erra voltam mais cedo, enquanto os que você domina aparecem menos.',
+    extra: `<div class="ob-niveis">
+      <span class="badge-dominio badge-aprendendo">Aprendendo</span>
+      <span class="ob-seta">→</span>
+      <span class="badge-dominio badge-bom">Bom</span>
+      <span class="ob-seta">→</span>
+      <span class="badge-dominio badge-dominado">Dominado</span>
+    </div>`,
+  },
+  {
+    icone: '🎯',
+    titulo: 'Dois modos\nde treino',
+    texto: '<strong>Modo Clássico:</strong> ouça e identifique o toque.<br><br><strong>Múltipla Escolha:</strong> 4 alternativas com feedback imediato e dica do bizu ao errar.',
+    extra: '',
+  },
+];
+
+let telaOnboarding = 0;
+
+function verificarOnboarding() {
+  if (!localStorage.getItem("cefs-onboarding")) mostrarOnboarding();
+}
+
+function mostrarOnboarding() {
+  telaOnboarding = 0;
+  const overlay = document.createElement('div');
+  overlay.className = 'onboarding-overlay';
+  overlay.innerHTML = '<div class="onboarding-card"></div>';
+  document.body.appendChild(overlay);
+  renderTelaOnboarding();
+}
+
+function renderTelaOnboarding() {
+  const card = document.querySelector('.onboarding-card');
+  if (!card) return;
+  const tela  = TELAS_ONBOARDING[telaOnboarding];
+  const total = TELAS_ONBOARDING.length;
+  const ultima = telaOnboarding === total - 1;
+
+  const dots = Array.from({ length: total }, (_, i) =>
+    `<span class="ob-dot ${i === telaOnboarding ? 'ob-dot-ativo' : ''}"></span>`
+  ).join('');
+
+  card.innerHTML = `
+    <div class="ob-header">
+      <div class="ob-dots">${dots}</div>
+      ${!ultima
+        ? `<button class="ob-pular" onclick="concluirOnboarding()">Pular</button>`
+        : '<div></div>'}
+    </div>
+    <div class="ob-corpo">
+      <div class="ob-icone">${tela.icone}</div>
+      <h2 class="ob-titulo">${tela.titulo.replace('\n', '<br>')}</h2>
+      <p class="ob-texto">${tela.texto}</p>
+      ${tela.extra}
+    </div>
+    <button class="btn-primary ob-btn"
+            onclick="${ultima ? 'concluirOnboarding()' : 'proximaTelaOnboarding()'}">
+      ${ultima ? '🚀 Começar' : 'Próximo →'}
+    </button>
+  `;
+}
+
+function proximaTelaOnboarding() {
+  const card = document.querySelector('.onboarding-card');
+  if (!card) return;
+  card.style.cssText = 'opacity:0;transform:translateY(10px);transition:opacity .15s,transform .15s';
+  setTimeout(() => {
+    telaOnboarding++;
+    renderTelaOnboarding();
+    requestAnimationFrame(() => {
+      card.style.cssText = 'opacity:1;transform:translateY(0);transition:opacity .2s,transform .2s';
+    });
+  }, 150);
+}
+
+function concluirOnboarding() {
+  localStorage.setItem("cefs-onboarding", "1");
+  const overlay = document.querySelector('.onboarding-overlay');
+  if (overlay) {
+    overlay.classList.add('ob-saindo');
+    setTimeout(() => overlay.remove(), 350);
+  }
+}
+
 // --- INIT ---
 
 mostrarLista();
+verificarOnboarding();
 
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("sw.js");
