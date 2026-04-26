@@ -366,6 +366,92 @@ main {
   background: #ff6b35;
 }
 
+/* TELA DE REVISÃO DE ERROS */
+
+.erros-lista {
+  text-align: left;
+  margin: 4px 0 4px;
+}
+
+.erro-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.erro-item:last-child {
+  border-bottom: none;
+}
+
+.erro-info {
+  flex: 1;
+}
+
+.erro-nome {
+  display: block;
+  font-weight: 600;
+  font-size: 14px;
+  color: #222;
+}
+
+.erro-bizu {
+  display: block;
+  font-size: 12px;
+  color: #999;
+  font-style: italic;
+  margin-top: 2px;
+}
+
+.btn-play-mini {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: #e9edff;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+
+.btn-play-mini:active {
+  transform: scale(0.94);
+}
+
+.btn-play-mini svg {
+  width: 16px;
+  height: 16px;
+  stroke: #3b5bff;
+}
+
+/* HINT BIZU (MC — resposta errada) */
+
+.hint-bizu {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 10px 14px;
+  background: #fff9e6;
+  border-radius: 10px;
+  font-size: 13px;
+  color: #7a5100;
+  text-align: left;
+  animation: fadeIn 0.25s ease;
+}
+
+.hint-bizu svg {
+  width: 16px;
+  height: 16px;
+  stroke: #f5a623;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
 /* HISTÓRICO */
 
 .historico {

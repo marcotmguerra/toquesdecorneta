@@ -380,6 +380,13 @@ function responderMC(acertou, botaoClicado) {
     todosOsBotoes.forEach(btn => {
       if (btn.dataset.correto === 'true') btn.classList.add('opcao-correta');
     });
+    if (toque.bizu) {
+      const hint = document.createElement('div');
+      hint.className = 'hint-bizu';
+      hint.innerHTML = `<i data-lucide="lightbulb"></i> <span><strong>${toque.nome}:</strong> <em>"${toque.bizu}"</em></span>`;
+      document.querySelector('.opcoes-mc').appendChild(hint);
+      lucide.createIcons();
+    }
   }
 
   if (audioAtual) {
@@ -389,6 +396,7 @@ function responderMC(acertou, botaoClicado) {
     botaoAtual = null;
   }
 
+  const delay = acertou ? 1300 : 2100;
   setTimeout(() => {
     indiceAtual++;
     if (indiceAtual < provaAtual.length) {
@@ -396,7 +404,7 @@ function responderMC(acertou, botaoClicado) {
     } else {
       mostrarResultado();
     }
-  }, 1300);
+  }, delay);
 }
 
 function mostrarResposta() {
@@ -477,7 +485,9 @@ function mostrarResultado() {
     : '<i data-lucide="x-circle"></i>';
 
   const btnErros = erros.length > 0
-    ? `<button class="btn-primary btn-erros" onclick="iniciarProvaComErros()"><i data-lucide="rotate-cw"></i> Revisar ${erros.length} erro(s)</button><br><br>`
+    ? `<button class="btn-primary btn-erros" onclick="mostrarRevisaoErros()">
+         <i data-lucide="rotate-cw"></i> Praticar ${erros.length} erro(s)
+       </button><br><br>`
     : "";
 
   conteudo.innerHTML = `
@@ -491,9 +501,45 @@ function mostrarResultado() {
       <br>
       ${btnErros}
       <button class="btn-primary" onclick="mostrarSimulado()">
-        Refazer Prova
+        Novo Simulado
       </button>
       ${renderHistorico()}
+    </div>
+  `;
+
+  lucide.createIcons();
+}
+
+function mostrarRevisaoErros() {
+  const lista = [...erros];
+
+  const itensHTML = lista.map(t => `
+    <div class="erro-item">
+      <div class="erro-info">
+        <span class="erro-nome">${t.nome}</span>
+        ${t.bizu ? `<span class="erro-bizu">"${t.bizu}"</span>` : ''}
+      </div>
+      <button class="btn-play-mini"
+              aria-label="Reproduzir ${t.nome}"
+              onclick="tocarAudio('${t.audio}', this)">
+        <i data-lucide="play"></i>
+      </button>
+    </div>
+  `).join('');
+
+  conteudo.innerHTML = `
+    <div class="card prova-card">
+      <h2>Revisão de Erros</h2>
+      <p class="subtitulo-simulado">${lista.length} toque(s) para praticar — ouça antes de começar</p>
+      <div class="erros-lista">
+        ${itensHTML}
+      </div>
+      <br>
+      <button class="btn-primary btn-erros" onclick="iniciarProvaComErros()">
+        <i data-lucide="rotate-cw"></i> Iniciar Quiz
+      </button>
+      <br><br>
+      <button class="btn-secundario" onclick="mostrarSimulado()">Voltar ao início</button>
     </div>
   `;
 
@@ -561,7 +607,7 @@ function mostrarInfo() {
         <p>DESENVOLVIDO POR</p>
         <div class="dev-info">
           <strong>Pelotão Delta</strong>
-          <p>Versão 1.4.0 (2026)</p>
+          <p>Versão 1.5.0 (2026)</p>
         </div>
         <div class="info-links">
           <a href="https://wa.me/5531996338032?text=Olá! Tenho uma dúvida/sugestão sobre o App de Toques de Corneta." target="_blank" rel="noopener noreferrer">Suporte e sugestão</a>
