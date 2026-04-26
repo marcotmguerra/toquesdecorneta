@@ -86,6 +86,47 @@ function tocarAudio(caminho, botao) {
   }
 }
 
+// --- MÉTRICAS ---
+
+function getMetricas() {
+  return JSON.parse(localStorage.getItem("cefs-metricas") || "{}");
+}
+
+function salvarMetricas(metricas) {
+  localStorage.setItem("cefs-metricas", JSON.stringify(metricas));
+}
+
+function getMetricaToque(id) {
+  return getMetricas()[id] || { acertos: 0, erros: 0, sequencia: 0, ultimaVez: null, dominio: "aprendendo" };
+}
+
+function calcularDominio(sequencia) {
+  if (sequencia >= 6) return "dominado";
+  if (sequencia >= 3) return "bom";
+  return "aprendendo";
+}
+
+function atualizarMetrica(toqueId, acertou) {
+  const metricas = getMetricas();
+  const m = metricas[toqueId] || { acertos: 0, erros: 0, sequencia: 0, ultimaVez: null, dominio: "aprendendo" };
+  if (acertou) { m.acertos++; m.sequencia++; }
+  else         { m.erros++;   m.sequencia = 0; }
+  m.ultimaVez = new Date().toISOString();
+  m.dominio = calcularDominio(m.sequencia);
+  metricas[toqueId] = m;
+  salvarMetricas(metricas);
+}
+
+function tempoRelativo(iso) {
+  if (!iso) return null;
+  const dias = Math.floor((Date.now() - new Date(iso).getTime()) / 86400000);
+  if (dias === 0) return "hoje";
+  if (dias === 1) return "ontem";
+  return `há ${dias} dias`;
+}
+
+const DOMINIO_LABEL = { aprendendo: "Aprendendo", bom: "Bom", dominado: "Dominado" };
+
 // --- UTILITÁRIOS ---
 
 function embaralhar(array) {
@@ -120,21 +161,66 @@ function navegarPara(destino) {
 
 // --- LISTA ---
 
+function renderResumoProgresso() {
+  const metricas = getMetricas();
+  const praticados = toques.map(t => metricas[t.id]).filter(Boolean);
+  if (praticados.length === 0) return "";
+
+  const counts = { aprendendo: 0, bom: 0, dominado: 0 };
+  praticados.forEach(m => counts[m.dominio]++);
+  const naoIniciados = toques.length - praticados.length;
+  counts.aprendendo += naoIniciados;
+
+  const pct = Math.round((counts.dominado / toques.length) * 100);
+
+  return `
+    <div class="card resumo-progresso">
+      <div class="resumo-header">
+        <h3>Seu Progresso</h3>
+        <span class="resumo-pct">${pct}% dominado</span>
+      </div>
+      <div class="resumo-barra-geral">
+        <div class="resumo-fill-aprendendo" style="width:${Math.round((counts.aprendendo/toques.length)*100)}%"></div>
+        <div class="resumo-fill-bom"        style="width:${Math.round((counts.bom/toques.length)*100)}%"></div>
+        <div class="resumo-fill-dominado"   style="width:${Math.round((counts.dominado/toques.length)*100)}%"></div>
+      </div>
+      <div class="resumo-legenda">
+        <span><span class="dot dot-aprendendo"></span> Aprendendo <strong>${counts.aprendendo}</strong></span>
+        <span><span class="dot dot-bom"></span> Bom <strong>${counts.bom}</strong></span>
+        <span><span class="dot dot-dominado"></span> Dominado <strong>${counts.dominado}</strong></span>
+      </div>
+    </div>
+  `;
+}
+
 function mostrarLista() {
   setNavAtiva("lista");
-  conteudo.innerHTML = "";
+  conteudo.innerHTML = renderResumoProgresso();
 
   toques.forEach(t => {
+    const m = getMetricaToque(t.id);
+    const total = m.acertos + m.erros;
+    const taxa = total > 0 ? Math.round((m.acertos / total) * 100) : null;
+    const quando = tempoRelativo(m.ultimaVez);
+
+    const metricasHTML = `
+      <div class="card-metricas">
+        <span class="badge-dominio badge-${m.dominio}">${DOMINIO_LABEL[m.dominio]}</span>
+        ${taxa !== null ? `<span class="metrica-info">${taxa}% acerto</span>` : ''}
+        ${m.sequencia >= 2 ? `<span class="metrica-sequencia">🔥 ${m.sequencia} seguidos</span>` : ''}
+        ${quando ? `<span class="metrica-info">${quando}</span>` : ''}
+      </div>
+    `;
+
     const card = document.createElement("div");
     card.className = "card";
-
     card.innerHTML = `
       <div class="card-top">
         <div class="card-icon"><i data-lucide="music-2"></i></div>
         <div class="card-text">
           <h2>${t.nome}</h2>
-          <small>${t.bizu}</small>
-          <p>CEFS A 2026 - Pelotão Delta</p>
+          ${t.bizu ? `<small>${t.bizu}</small>` : ''}
+          ${metricasHTML}
         </div>
       </div>
       <div class="card-actions">
@@ -145,7 +231,6 @@ function mostrarLista() {
         </button>
       </div>
     `;
-
     conteudo.appendChild(card);
   });
 
@@ -282,6 +367,7 @@ function mostrarQuestaoMC() {
 
 function responderMC(acertou, botaoClicado) {
   const toque = provaAtual[indiceAtual];
+  atualizarMetrica(toque.id, acertou);
   const todosOsBotoes = document.querySelectorAll('.btn-opcao');
   todosOsBotoes.forEach(btn => { btn.disabled = true; });
 
@@ -359,6 +445,7 @@ function mostrarResposta() {
 
 function responder(acertou) {
   const toque = provaAtual[indiceAtual];
+  atualizarMetrica(toque.id, acertou);
   if (acertou) {
     acertos++;
   } else {
@@ -474,7 +561,7 @@ function mostrarInfo() {
         <p>DESENVOLVIDO POR</p>
         <div class="dev-info">
           <strong>Pelotão Delta</strong>
-          <p>Versão 1.3.0 (2026)</p>
+          <p>Versão 1.4.0 (2026)</p>
         </div>
         <div class="info-links">
           <a href="https://wa.me/5531996338032?text=Olá! Tenho uma dúvida/sugestão sobre o App de Toques de Corneta." target="_blank" rel="noopener noreferrer">Suporte e sugestão</a>

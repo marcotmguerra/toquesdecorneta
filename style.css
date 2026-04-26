@@ -526,6 +526,103 @@ main {
   color: #c0392b !important;
 }
 
+/* MÉTRICAS NOS CARDS */
+
+.card-metricas {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 7px;
+}
+
+.badge-dominio {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  flex-shrink: 0;
+}
+
+.badge-aprendendo { background: #e9edff; color: #3b5bff; }
+.badge-bom        { background: #fff3cd; color: #7a5100; }
+.badge-dominado   { background: #d4f0dc; color: #1a7a35; }
+
+.metrica-info {
+  font-size: 11px;
+  color: #aaa;
+}
+
+.metrica-sequencia {
+  font-size: 11px;
+  color: #d4570e;
+  font-weight: 600;
+}
+
+/* RESUMO DE PROGRESSO */
+
+.resumo-progresso {
+  margin-bottom: 16px;
+  padding: 16px 18px;
+}
+
+.resumo-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.resumo-header h3 {
+  font-size: 13px;
+  font-weight: 700;
+  color: #333;
+}
+
+.resumo-pct {
+  font-size: 12px;
+  font-weight: 700;
+  color: #1a7a35;
+}
+
+.resumo-barra-geral {
+  height: 8px;
+  border-radius: 4px;
+  background: #e0e0e0;
+  display: flex;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.resumo-fill-aprendendo { background: #aab4ff; height: 100%; }
+.resumo-fill-bom        { background: #f5c542; height: 100%; }
+.resumo-fill-dominado   { background: #2ecc71; height: 100%; }
+
+.resumo-legenda {
+  display: flex;
+  gap: 14px;
+  font-size: 11px;
+  color: #666;
+}
+
+.resumo-legenda strong {
+  color: #222;
+}
+
+.dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 3px;
+}
+
+.dot-aprendendo { background: #aab4ff; }
+.dot-bom        { background: #f5c542; }
+.dot-dominado   { background: #2ecc71; }
+
 /* ESTADOS DE BOTÃO */
 
 .btn-primary:disabled {
