@@ -847,7 +847,7 @@ function mostrarInfo() {
         <p>DESENVOLVIDO POR</p>
         <div class="dev-info">
           <strong>Pelotão Delta</strong>
-          <p>Versão 1.9.0 (2026)</p>
+          <p>Versão 2.0.0 (2026)</p>
         </div>
         <div class="info-links">
           <a href="https://wa.me/5531996338032?text=Olá! Tenho uma dúvida/sugestão sobre o App de Toques de Corneta." target="_blank" rel="noopener noreferrer">Suporte e sugestão</a>
@@ -858,6 +858,29 @@ function mostrarInfo() {
   `;
 
   lucide.createIcons();
+}
+
+// --- TEMA ---
+
+function getTemaSalvo() {
+  return localStorage.getItem("cefs-tema") ||
+    (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+}
+
+function aplicarTema(tema) {
+  document.documentElement.setAttribute('data-theme', tema);
+  localStorage.setItem("cefs-tema", tema);
+  const btn = document.getElementById('btnTema');
+  if (!btn) return;
+  btn.innerHTML = tema === 'dark'
+    ? '<i data-lucide="sun"></i>'
+    : '<i data-lucide="moon"></i>';
+  lucide.createIcons();
+}
+
+function toggleTema() {
+  const atual = document.documentElement.getAttribute('data-theme') || 'light';
+  aplicarTema(atual === 'dark' ? 'light' : 'dark');
 }
 
 // --- ONBOARDING ---
@@ -959,6 +982,7 @@ function concluirOnboarding() {
 
 // --- INIT ---
 
+aplicarTema(getTemaSalvo());
 mostrarLista();
 verificarOnboarding();
 
