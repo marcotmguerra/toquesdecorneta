@@ -325,11 +325,18 @@ main {
 
 /* BARRA DE PROGRESSO */
 
+.progress-topo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
 .progress-bar {
+  flex: 1;
   height: 6px;
   background: #e0e0e0;
   border-radius: 3px;
-  margin-bottom: 16px;
   overflow: hidden;
 }
 
@@ -338,6 +345,14 @@ main {
   background: #3b5bff;
   border-radius: 3px;
   transition: width 0.3s ease;
+}
+
+.badge-srs {
+  font-size: 10px;
+  font-weight: 700;
+  color: #3b5bff;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 /* RESULTADO COLORIDO */
@@ -364,6 +379,92 @@ main {
 
 .btn-erros {
   background: #ff6b35;
+}
+
+/* TELA DE REVISÃO DE ERROS */
+
+.erros-lista {
+  text-align: left;
+  margin: 4px 0 4px;
+}
+
+.erro-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.erro-item:last-child {
+  border-bottom: none;
+}
+
+.erro-info {
+  flex: 1;
+}
+
+.erro-nome {
+  display: block;
+  font-weight: 600;
+  font-size: 14px;
+  color: #222;
+}
+
+.erro-bizu {
+  display: block;
+  font-size: 12px;
+  color: #999;
+  font-style: italic;
+  margin-top: 2px;
+}
+
+.btn-play-mini {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: #e9edff;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+
+.btn-play-mini:active {
+  transform: scale(0.94);
+}
+
+.btn-play-mini svg {
+  width: 16px;
+  height: 16px;
+  stroke: #3b5bff;
+}
+
+/* HINT BIZU (MC — resposta errada) */
+
+.hint-bizu {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 10px 14px;
+  background: #fff9e6;
+  border-radius: 10px;
+  font-size: 13px;
+  color: #7a5100;
+  text-align: left;
+  animation: fadeIn 0.25s ease;
+}
+
+.hint-bizu svg {
+  width: 16px;
+  height: 16px;
+  stroke: #f5a623;
+  flex-shrink: 0;
+  margin-top: 1px;
 }
 
 /* HISTÓRICO */
@@ -403,6 +504,247 @@ main {
   flex-direction: column;
   gap: 12px;
 }
+
+/* BOTÃO DE MODO */
+
+.btn-modo {
+  width: 100%;
+  background: white;
+  border: 2px solid #e0e0e0;
+  padding: 16px;
+  border-radius: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-align: left;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.btn-modo:hover {
+  border-color: #3b5bff;
+  background: #f0f3ff;
+}
+
+.btn-modo svg {
+  width: 26px;
+  height: 26px;
+  stroke: #3b5bff;
+  flex-shrink: 0;
+}
+
+.btn-modo strong {
+  display: block;
+  font-size: 15px;
+  color: #222;
+}
+
+.btn-modo span {
+  display: block;
+  font-size: 12px;
+  color: #888;
+  margin-top: 3px;
+}
+
+/* BOTÃO SECUNDÁRIO (Voltar) */
+
+.btn-secundario {
+  width: 100%;
+  background: #f0f2f5;
+  color: #555;
+  border: none;
+  padding: 13px;
+  border-radius: 14px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.btn-secundario:active {
+  transform: scale(0.97);
+}
+
+/* AVISO ADAPTATIVO */
+
+.aviso-adaptativo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f0f3ff;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: #3b5bff;
+  margin-bottom: 16px;
+  text-align: left;
+}
+
+.aviso-adaptativo svg {
+  width: 16px;
+  height: 16px;
+  stroke: #3b5bff;
+  flex-shrink: 0;
+}
+
+/* MÚLTIPLA ESCOLHA */
+
+.questao-label {
+  font-size: 11px;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 6px;
+}
+
+.questao-instrucao {
+  font-size: 19px;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 18px;
+}
+
+.btn-audio-mc {
+  margin-bottom: 6px;
+}
+
+.opcoes-mc {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.btn-opcao {
+  width: 100%;
+  background: white;
+  color: #333;
+  border: 2px solid #e0e0e0;
+  padding: 14px 16px;
+  border-radius: 14px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.btn-opcao:not(:disabled):hover {
+  border-color: #3b5bff;
+  background: #f0f3ff;
+}
+
+.btn-opcao:disabled {
+  cursor: not-allowed;
+}
+
+.opcao-correta {
+  background: #d4f0dc !important;
+  border-color: #1a7a35 !important;
+  color: #1a7a35 !important;
+}
+
+.opcao-errada {
+  background: #fde8e8 !important;
+  border-color: #c0392b !important;
+  color: #c0392b !important;
+}
+
+/* MÉTRICAS NOS CARDS */
+
+.card-metricas {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 7px;
+}
+
+.badge-dominio {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  flex-shrink: 0;
+}
+
+.badge-aprendendo { background: #e9edff; color: #3b5bff; }
+.badge-bom        { background: #fff3cd; color: #7a5100; }
+.badge-dominado   { background: #d4f0dc; color: #1a7a35; }
+
+.metrica-info {
+  font-size: 11px;
+  color: #aaa;
+}
+
+.metrica-sequencia {
+  font-size: 11px;
+  color: #d4570e;
+  font-weight: 600;
+}
+
+/* RESUMO DE PROGRESSO */
+
+.resumo-progresso {
+  margin-bottom: 16px;
+  padding: 16px 18px;
+}
+
+.resumo-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.resumo-header h3 {
+  font-size: 13px;
+  font-weight: 700;
+  color: #333;
+}
+
+.resumo-pct {
+  font-size: 12px;
+  font-weight: 700;
+  color: #1a7a35;
+}
+
+.resumo-barra-geral {
+  height: 8px;
+  border-radius: 4px;
+  background: #e0e0e0;
+  display: flex;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.resumo-fill-aprendendo { background: #aab4ff; height: 100%; }
+.resumo-fill-bom        { background: #f5c542; height: 100%; }
+.resumo-fill-dominado   { background: #2ecc71; height: 100%; }
+
+.resumo-legenda {
+  display: flex;
+  gap: 14px;
+  font-size: 11px;
+  color: #666;
+}
+
+.resumo-legenda strong {
+  color: #222;
+}
+
+.dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 3px;
+}
+
+.dot-aprendendo { background: #aab4ff; }
+.dot-bom        { background: #f5c542; }
+.dot-dominado   { background: #2ecc71; }
 
 /* ESTADOS DE BOTÃO */
 

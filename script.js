@@ -24,6 +24,7 @@ let acertos = 0;
 let erros = [];
 let audioAtual = null;
 let botaoAtual = null;
+let modoAtual = 'classico'; // 'classico' | 'multipla'
 
 // --- ÁUDIO ---
 
@@ -85,6 +86,90 @@ function tocarAudio(caminho, botao) {
   }
 }
 
+// --- MÉTRICAS ---
+
+function getMetricas() {
+  return JSON.parse(localStorage.getItem("cefs-metricas") || "{}");
+}
+
+function salvarMetricas(metricas) {
+  localStorage.setItem("cefs-metricas", JSON.stringify(metricas));
+}
+
+function getMetricaToque(id) {
+  return getMetricas()[id] || { acertos: 0, erros: 0, sequencia: 0, ultimaVez: null, dominio: "aprendendo" };
+}
+
+function calcularDominio(sequencia) {
+  if (sequencia >= 6) return "dominado";
+  if (sequencia >= 3) return "bom";
+  return "aprendendo";
+}
+
+function atualizarMetrica(toqueId, acertou) {
+  const metricas = getMetricas();
+  const m = metricas[toqueId] || { acertos: 0, erros: 0, sequencia: 0, ultimaVez: null, dominio: "aprendendo" };
+  if (acertou) { m.acertos++; m.sequencia++; }
+  else         { m.erros++;   m.sequencia = 0; }
+  m.ultimaVez = new Date().toISOString();
+  m.dominio = calcularDominio(m.sequencia);
+  metricas[toqueId] = m;
+  salvarMetricas(metricas);
+}
+
+function tempoRelativo(iso) {
+  if (!iso) return null;
+  const dias = Math.floor((Date.now() - new Date(iso).getTime()) / 86400000);
+  if (dias === 0) return "hoje";
+  if (dias === 1) return "ontem";
+  return `há ${dias} dias`;
+}
+
+const DOMINIO_LABEL = { aprendendo: "Aprendendo", bom: "Bom", dominado: "Dominado" };
+
+// --- SRS ---
+
+function calcularPeso(m) {
+  if (!m) return 5; // nunca praticado → máxima prioridade
+
+  const pesoDominio = { aprendendo: 3, bom: 2, dominado: 1 };
+  let peso = pesoDominio[m.dominio] || 3;
+
+  if (m.ultimaVez) {
+    const dias = (Date.now() - new Date(m.ultimaVez).getTime()) / 86400000;
+    if      (dias > 7) peso += 2; // atrasado: urgente
+    else if (dias > 3) peso += 1; // próximo de vencer
+    else if (dias < 1) peso = Math.max(1, peso - 1); // revisado hoje: leve redução
+  }
+
+  return peso;
+}
+
+function selecionarToquesPonderados(total) {
+  const metricas = getMetricas();
+
+  // Cria pool ponderado: cada toque aparece N vezes conforme seu peso
+  const pool = [];
+  toques.forEach(t => {
+    const peso = calcularPeso(metricas[t.id]);
+    for (let i = 0; i < peso; i++) pool.push(t);
+  });
+
+  // Embaralha e extrai toques únicos na ordem resultante
+  const shuffled = embaralhar(pool);
+  const vistos = new Set();
+  const selecionados = [];
+  for (const t of shuffled) {
+    if (!vistos.has(t.id)) {
+      vistos.add(t.id);
+      selecionados.push(t);
+      if (selecionados.length === total) break;
+    }
+  }
+
+  return selecionados;
+}
+
 // --- UTILITÁRIOS ---
 
 function embaralhar(array) {
@@ -119,21 +204,66 @@ function navegarPara(destino) {
 
 // --- LISTA ---
 
+function renderResumoProgresso() {
+  const metricas = getMetricas();
+  const praticados = toques.map(t => metricas[t.id]).filter(Boolean);
+  if (praticados.length === 0) return "";
+
+  const counts = { aprendendo: 0, bom: 0, dominado: 0 };
+  praticados.forEach(m => counts[m.dominio]++);
+  const naoIniciados = toques.length - praticados.length;
+  counts.aprendendo += naoIniciados;
+
+  const pct = Math.round((counts.dominado / toques.length) * 100);
+
+  return `
+    <div class="card resumo-progresso">
+      <div class="resumo-header">
+        <h3>Seu Progresso</h3>
+        <span class="resumo-pct">${pct}% dominado</span>
+      </div>
+      <div class="resumo-barra-geral">
+        <div class="resumo-fill-aprendendo" style="width:${Math.round((counts.aprendendo/toques.length)*100)}%"></div>
+        <div class="resumo-fill-bom"        style="width:${Math.round((counts.bom/toques.length)*100)}%"></div>
+        <div class="resumo-fill-dominado"   style="width:${Math.round((counts.dominado/toques.length)*100)}%"></div>
+      </div>
+      <div class="resumo-legenda">
+        <span><span class="dot dot-aprendendo"></span> Aprendendo <strong>${counts.aprendendo}</strong></span>
+        <span><span class="dot dot-bom"></span> Bom <strong>${counts.bom}</strong></span>
+        <span><span class="dot dot-dominado"></span> Dominado <strong>${counts.dominado}</strong></span>
+      </div>
+    </div>
+  `;
+}
+
 function mostrarLista() {
   setNavAtiva("lista");
-  conteudo.innerHTML = "";
+  conteudo.innerHTML = renderResumoProgresso();
 
   toques.forEach(t => {
+    const m = getMetricaToque(t.id);
+    const total = m.acertos + m.erros;
+    const taxa = total > 0 ? Math.round((m.acertos / total) * 100) : null;
+    const quando = tempoRelativo(m.ultimaVez);
+
+    const metricasHTML = `
+      <div class="card-metricas">
+        <span class="badge-dominio badge-${m.dominio}">${DOMINIO_LABEL[m.dominio]}</span>
+        ${taxa !== null ? `<span class="metrica-info">${taxa}% acerto</span>` : ''}
+        ${m.sequencia >= 2 ? `<span class="metrica-sequencia">🔥 ${m.sequencia} seguidos</span>` : ''}
+        ${quando ? `<span class="metrica-info">${quando}</span>` : ''}
+      </div>
+    `;
+
     const card = document.createElement("div");
     card.className = "card";
-
     card.innerHTML = `
       <div class="card-top">
         <div class="card-icon"><i data-lucide="music-2"></i></div>
         <div class="card-text">
           <h2>${t.nome}</h2>
-          <small>${t.bizu}</small>
-          <p>CEFS A 2026 - Pelotão Delta</p>
+          ${t.bizu ? `<small>${t.bizu}</small>` : ''}
+          ${metricasHTML}
         </div>
       </div>
       <div class="card-actions">
@@ -144,7 +274,6 @@ function mostrarLista() {
         </button>
       </div>
     `;
-
     conteudo.appendChild(card);
   });
 
@@ -159,23 +288,58 @@ function mostrarSimulado() {
 
   conteudo.innerHTML = `
     <div class="card prova-card">
-      <h2>Simulado</h2>
+      <h2>Treino</h2>
+      <p class="subtitulo-simulado">Escolha o modo</p>
+      <div class="opcoes-simulado">
+        <button class="btn-modo" onclick="selecionarModo('classico')">
+          <i data-lucide="headphones"></i>
+          <div>
+            <strong>Modo Clássico</strong>
+            <span>Ouça e identifique o toque</span>
+          </div>
+        </button>
+        <button class="btn-modo" onclick="selecionarModo('multipla')">
+          <i data-lucide="list-checks"></i>
+          <div>
+            <strong>Múltipla Escolha</strong>
+            <span>Escolha entre 4 alternativas</span>
+          </div>
+        </button>
+      </div>
+    </div>
+  `;
+  lucide.createIcons();
+}
+
+function selecionarModo(modo) {
+  modoAtual = modo;
+  const titulo = modo === 'multipla' ? 'Múltipla Escolha' : 'Modo Clássico';
+
+  conteudo.innerHTML = `
+    <div class="card prova-card">
+      <h2>${titulo}</h2>
       <p class="subtitulo-simulado">Quantas questões?</p>
+      <div class="aviso-adaptativo">
+        <i data-lucide="brain"></i>
+        <span>Toques mais fracos e esquecidos aparecem com mais frequência</span>
+      </div>
       <div class="opcoes-simulado">
         <button class="btn-primary" onclick="iniciarProva(5)">5 questões</button>
         <button class="btn-primary" onclick="iniciarProva(10)">10 questões</button>
         <button class="btn-primary" onclick="iniciarProva(${toques.length})">Todas (${toques.length})</button>
+        <button class="btn-secundario" onclick="mostrarSimulado()">← Voltar</button>
       </div>
     </div>
   `;
+  lucide.createIcons();
 }
 
 function iniciarProva(total) {
-  provaAtual = embaralhar(toques).slice(0, total);
+  provaAtual = selecionarToquesPonderados(total);
   indiceAtual = 0;
   acertos = 0;
   erros = [];
-  mostrarQuestao();
+  modoAtual === 'multipla' ? mostrarQuestaoMC() : mostrarQuestao();
 }
 
 function iniciarProvaComErros() {
@@ -183,7 +347,7 @@ function iniciarProvaComErros() {
   indiceAtual = 0;
   acertos = 0;
   erros = [];
-  mostrarQuestao();
+  modoAtual === 'multipla' ? mostrarQuestaoMC() : mostrarQuestao();
 }
 
 function mostrarQuestao() {
@@ -192,8 +356,11 @@ function mostrarQuestao() {
   const progresso = (indiceAtual / total) * 100;
 
   conteudo.innerHTML = `
-    <div class="progress-bar">
-      <div class="progress-fill" style="width: ${progresso}%"></div>
+    <div class="progress-topo">
+      <div class="progress-bar">
+        <div class="progress-fill" style="width: ${progresso}%"></div>
+      </div>
+      <span class="badge-srs">🎯 Adaptativo</span>
     </div>
     <div class="card prova-card">
       <h2>Toque ${indiceAtual + 1} de ${total}</h2>
@@ -212,14 +379,99 @@ function mostrarQuestao() {
   lucide.createIcons();
 }
 
+function mostrarQuestaoMC() {
+  const toque = provaAtual[indiceAtual];
+  const total = provaAtual.length;
+  const progresso = (indiceAtual / total) * 100;
+
+  const erradas = embaralhar(toques.filter(t => t.id !== toque.id)).slice(0, 3);
+  const opcoes = embaralhar([toque, ...erradas]);
+
+  const opcoesHTML = opcoes.map(op => `
+    <button class="btn-opcao"
+            data-correto="${op.id === toque.id}"
+            onclick="responderMC(${op.id === toque.id}, this)">
+      ${op.nome}
+    </button>
+  `).join('');
+
+  conteudo.innerHTML = `
+    <div class="progress-topo">
+      <div class="progress-bar">
+        <div class="progress-fill" style="width: ${progresso}%"></div>
+      </div>
+      <span class="badge-srs">🎯 Adaptativo</span>
+    </div>
+    <div class="card prova-card">
+      <p class="questao-label">Questão ${indiceAtual + 1} de ${total}</p>
+      <p class="questao-instrucao">Qual é este toque?</p>
+      <button class="btn-primary btn-audio-mc"
+              aria-label="Reproduzir toque ${indiceAtual + 1} de ${total}"
+              onclick="tocarAudio('${toque.audio}', this)">
+        <i data-lucide="play"></i> Ouvir Toque
+      </button>
+      <div class="opcoes-mc">
+        ${opcoesHTML}
+      </div>
+    </div>
+  `;
+
+  lucide.createIcons();
+}
+
+function responderMC(acertou, botaoClicado) {
+  const toque = provaAtual[indiceAtual];
+  atualizarMetrica(toque.id, acertou);
+  const todosOsBotoes = document.querySelectorAll('.btn-opcao');
+  todosOsBotoes.forEach(btn => { btn.disabled = true; });
+
+  if (acertou) {
+    botaoClicado.classList.add('opcao-correta');
+    acertos++;
+  } else {
+    botaoClicado.classList.add('opcao-errada');
+    erros.push(toque);
+    todosOsBotoes.forEach(btn => {
+      if (btn.dataset.correto === 'true') btn.classList.add('opcao-correta');
+    });
+    if (toque.bizu) {
+      const hint = document.createElement('div');
+      hint.className = 'hint-bizu';
+      hint.innerHTML = `<i data-lucide="lightbulb"></i> <span><strong>${toque.nome}:</strong> <em>"${toque.bizu}"</em></span>`;
+      document.querySelector('.opcoes-mc').appendChild(hint);
+      lucide.createIcons();
+    }
+  }
+
+  if (audioAtual) {
+    audioAtual.pause();
+    audioAtual.currentTime = 0;
+    audioAtual = null;
+    botaoAtual = null;
+  }
+
+  const delay = acertou ? 1300 : 2100;
+  setTimeout(() => {
+    indiceAtual++;
+    if (indiceAtual < provaAtual.length) {
+      mostrarQuestaoMC();
+    } else {
+      mostrarResultado();
+    }
+  }, delay);
+}
+
 function mostrarResposta() {
   const toque = provaAtual[indiceAtual];
   const total = provaAtual.length;
   const progresso = (indiceAtual / total) * 100;
 
   conteudo.innerHTML = `
-    <div class="progress-bar">
-      <div class="progress-fill" style="width: ${progresso}%"></div>
+    <div class="progress-topo">
+      <div class="progress-bar">
+        <div class="progress-fill" style="width: ${progresso}%"></div>
+      </div>
+      <span class="badge-srs">🎯 Adaptativo</span>
     </div>
     <div class="card prova-card">
       <h2>${toque.nome}</h2>
@@ -258,6 +510,7 @@ function mostrarResposta() {
 
 function responder(acertou) {
   const toque = provaAtual[indiceAtual];
+  atualizarMetrica(toque.id, acertou);
   if (acertou) {
     acertos++;
   } else {
@@ -289,7 +542,9 @@ function mostrarResultado() {
     : '<i data-lucide="x-circle"></i>';
 
   const btnErros = erros.length > 0
-    ? `<button class="btn-primary btn-erros" onclick="iniciarProvaComErros()"><i data-lucide="rotate-cw"></i> Revisar ${erros.length} erro(s)</button><br><br>`
+    ? `<button class="btn-primary btn-erros" onclick="mostrarRevisaoErros()">
+         <i data-lucide="rotate-cw"></i> Praticar ${erros.length} erro(s)
+       </button><br><br>`
     : "";
 
   conteudo.innerHTML = `
@@ -303,9 +558,45 @@ function mostrarResultado() {
       <br>
       ${btnErros}
       <button class="btn-primary" onclick="mostrarSimulado()">
-        Refazer Prova
+        Novo Simulado
       </button>
       ${renderHistorico()}
+    </div>
+  `;
+
+  lucide.createIcons();
+}
+
+function mostrarRevisaoErros() {
+  const lista = [...erros];
+
+  const itensHTML = lista.map(t => `
+    <div class="erro-item">
+      <div class="erro-info">
+        <span class="erro-nome">${t.nome}</span>
+        ${t.bizu ? `<span class="erro-bizu">"${t.bizu}"</span>` : ''}
+      </div>
+      <button class="btn-play-mini"
+              aria-label="Reproduzir ${t.nome}"
+              onclick="tocarAudio('${t.audio}', this)">
+        <i data-lucide="play"></i>
+      </button>
+    </div>
+  `).join('');
+
+  conteudo.innerHTML = `
+    <div class="card prova-card">
+      <h2>Revisão de Erros</h2>
+      <p class="subtitulo-simulado">${lista.length} toque(s) para praticar — ouça antes de começar</p>
+      <div class="erros-lista">
+        ${itensHTML}
+      </div>
+      <br>
+      <button class="btn-primary btn-erros" onclick="iniciarProvaComErros()">
+        <i data-lucide="rotate-cw"></i> Iniciar Quiz
+      </button>
+      <br><br>
+      <button class="btn-secundario" onclick="mostrarSimulado()">Voltar ao início</button>
     </div>
   `;
 
@@ -373,7 +664,7 @@ function mostrarInfo() {
         <p>DESENVOLVIDO POR</p>
         <div class="dev-info">
           <strong>Pelotão Delta</strong>
-          <p>Versão 1.2.0 (2026)</p>
+          <p>Versão 1.6.0 (2026)</p>
         </div>
         <div class="info-links">
           <a href="https://wa.me/5531996338032?text=Olá! Tenho uma dúvida/sugestão sobre o App de Toques de Corneta." target="_blank" rel="noopener noreferrer">Suporte e sugestão</a>
