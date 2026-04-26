@@ -150,6 +150,89 @@ function vibrar(padrao) {
   if ('vibrate' in navigator) navigator.vibrate(padrao);
 }
 
+function tocarSomConquista() {
+  if (!getConfig().som) return;
+  const ctx = getAudioCtx();
+  const t = ctx.currentTime;
+  [523, 659, 784, 1047].forEach((freq, i) => {
+    const osc  = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(0.2, t + i * 0.12);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + i * 0.12 + 0.28);
+    osc.start(t + i * 0.12);
+    osc.stop(t + i * 0.12 + 0.28);
+  });
+}
+
+function iniciarConfetti(canvas) {
+  const ctx = canvas.getContext('2d');
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const cores = ['#3b5bff', '#2ecc71', '#f5c542', '#ff6b35', '#e74c3c', '#9b59b6'];
+  const particulas = Array.from({ length: 90 }, () => ({
+    x:      Math.random() * canvas.width,
+    y:      Math.random() * canvas.height - canvas.height,
+    w:      Math.random() * 10 + 5,
+    h:      Math.random() * 6  + 3,
+    cor:    cores[Math.floor(Math.random() * cores.length)],
+    vx:     Math.random() * 4 - 2,
+    vy:     Math.random() * 3 + 1.5,
+    angulo: Math.random() * Math.PI * 2,
+    vang:   Math.random() * 0.15 - 0.075,
+  }));
+
+  let frame;
+  function animar() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particulas.forEach(p => {
+      p.x      += p.vx;
+      p.y      += p.vy;
+      p.angulo += p.vang;
+      p.vy     += 0.06;
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.angulo);
+      ctx.fillStyle = p.cor;
+      ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+      ctx.restore();
+    });
+    frame = requestAnimationFrame(animar);
+  }
+  animar();
+  setTimeout(() => cancelAnimationFrame(frame), 2800);
+}
+
+function mostrarConquistaDominado(nomeToque) {
+  vibrar([50, 30, 50, 30, 120]);
+  tocarSomConquista();
+
+  const overlay = document.createElement('div');
+  overlay.className = 'conquista-overlay';
+  overlay.innerHTML = `
+    <canvas class="confetti-canvas"></canvas>
+    <div class="conquista-card">
+      <div class="conquista-icon">🏆</div>
+      <h2>Dominado!</h2>
+      <p><strong>${nomeToque}</strong> está dominado</p>
+      <small>Toque para continuar</small>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+
+  iniciarConfetti(overlay.querySelector('.confetti-canvas'));
+
+  const fechar = () => {
+    overlay.classList.add('conquista-saindo');
+    setTimeout(() => overlay.remove(), 300);
+  };
+  overlay.addEventListener('click', fechar);
+  setTimeout(fechar, 3000);
+}
+
 // --- MÉTRICAS ---
 
 function getMetricas() {
@@ -173,12 +256,14 @@ function calcularDominio(sequencia) {
 function atualizarMetrica(toqueId, acertou) {
   const metricas = getMetricas();
   const m = metricas[toqueId] || { acertos: 0, erros: 0, sequencia: 0, ultimaVez: null, dominio: "aprendendo" };
+  const dominioAnterior = m.dominio;
   if (acertou) { m.acertos++; m.sequencia++; }
   else         { m.erros++;   m.sequencia = 0; }
   m.ultimaVez = new Date().toISOString();
   m.dominio = calcularDominio(m.sequencia);
   metricas[toqueId] = m;
   salvarMetricas(metricas);
+  return m.dominio === 'dominado' && dominioAnterior !== 'dominado';
 }
 
 function tempoRelativo(iso) {
@@ -485,7 +570,7 @@ function mostrarQuestaoMC() {
 
 function responderMC(acertou, botaoClicado) {
   const toque = provaAtual[indiceAtual];
-  atualizarMetrica(toque.id, acertou);
+  const novoDominio = atualizarMetrica(toque.id, acertou);
   const todosOsBotoes = document.querySelectorAll('.btn-opcao');
   todosOsBotoes.forEach(btn => { btn.disabled = true; });
 
@@ -494,6 +579,7 @@ function responderMC(acertou, botaoClicado) {
     acertos++;
     vibrar([40]);
     tocarSomAcerto();
+    if (novoDominio) setTimeout(() => mostrarConquistaDominado(toque.nome), 300);
   } else {
     botaoClicado.classList.add('opcao-errada');
     erros.push(toque);
@@ -578,11 +664,12 @@ function mostrarResposta() {
 
 function responder(acertou) {
   const toque = provaAtual[indiceAtual];
-  atualizarMetrica(toque.id, acertou);
+  const novoDominio = atualizarMetrica(toque.id, acertou);
   if (acertou) {
     acertos++;
     vibrar([40]);
     tocarSomAcerto();
+    if (novoDominio) setTimeout(() => mostrarConquistaDominado(toque.nome), 300);
   } else {
     erros.push(toque);
     vibrar([80, 50, 80]);
@@ -760,7 +847,7 @@ function mostrarInfo() {
         <p>DESENVOLVIDO POR</p>
         <div class="dev-info">
           <strong>Pelotão Delta</strong>
-          <p>Versão 1.7.0 (2026)</p>
+          <p>Versão 1.8.0 (2026)</p>
         </div>
         <div class="info-links">
           <a href="https://wa.me/5531996338032?text=Olá! Tenho uma dúvida/sugestão sobre o App de Toques de Corneta." target="_blank" rel="noopener noreferrer">Suporte e sugestão</a>
