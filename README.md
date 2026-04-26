@@ -1,6 +1,6 @@
 # Toques de Corneta — CEFS A 2026 · Pelotão Delta
 
-Aplicativo web progressivo (PWA) para auxiliar os alunos do **CEFS A 2026 – Pelotão Delta** na memorização dos toques de corneta militares. Funciona como um app instalável no celular, com suporte a uso offline.
+Aplicativo web progressivo (PWA) para auxiliar os alunos do **CEFS A 2026 – Pelotão Delta** na memorização dos toques de corneta militares. Funciona como app instalável no celular, com suporte a uso offline.
 
 ---
 
@@ -8,7 +8,7 @@ Aplicativo web progressivo (PWA) para auxiliar os alunos do **CEFS A 2026 – Pe
 
 O app reúne os 15 toques de corneta regulamentares utilizados nas atividades do pelotão. Para cada toque, o aluno pode ouvir o áudio original e consultar o **bizu** — uma frase mnemônica que ajuda a memorizar o som.
 
-Além da lista de referência, o app oferece um sistema de treino progressivo com **repetição espaçada (SRS)**, dois modos de quiz, métricas individuais por toque e revisão direcionada de erros.
+Além da lista de referência, o app oferece um sistema completo de treino progressivo com **repetição espaçada (SRS)**, dois modos de quiz, métricas individuais por toque, revisão direcionada de erros, feedback háptico e sonoro, animações de conquista, onboarding interativo e tema claro/escuro.
 
 ---
 
@@ -23,7 +23,7 @@ Além da lista de referência, o app oferece um sistema de treino progressivo co
   - Taxa de acerto em porcentagem
   - Sequência de acertos consecutivos (🔥 N seguidos)
   - Tempo desde a última revisão ("hoje", "ontem", "há N dias")
-- **Card de progresso geral** no topo com barra segmentada mostrando a distribuição dos 15 toques entre os três níveis
+- **Card de progresso geral** no topo com barra segmentada e percentual dominado
 
 ### Treino — Modos de Quiz
 
@@ -50,7 +50,7 @@ Em ambos os modos, a seleção de toques não é aleatória — usa **repetiçã
 | Nível de domínio | Aprendendo → peso 3 · Bom → peso 2 · Dominado → peso 1 |
 | Tempo desde a última revisão | Não visto há > 7 dias → +2 · > 3 dias → +1 · Revisado hoje → −1 |
 
-Toques mais fracos e mais esquecidos têm maior probabilidade de ser selecionados para a sessão. Um toque "Aprendendo" não revisado há 8 dias tem peso 5 — cinco vezes mais provável de aparecer do que um "Dominado" revisado hoje. O badge **🎯 Adaptativo** aparece na barra de progresso durante o quiz.
+Toques mais fracos e mais esquecidos têm maior probabilidade de ser selecionados para a sessão. O badge **🎯 Adaptativo** aparece na barra de progresso durante o quiz.
 
 ### Métricas por Toque
 
@@ -67,6 +67,16 @@ Cada toque possui um registro salvo localmente com:
 
 Qualquer erro zera a sequência e o nível volta para Aprendendo.
 
+### Animação de Conquista
+
+Quando um toque atinge o nível **Dominado**, o app dispara:
+- Confetti canvas com 90 partículas coloridas e física de gravidade
+- Card central animado com 🏆, nome do toque e mensagem de parabéns
+- Fanfarra: arpejo ascendente de 4 notas via Web Audio API
+- Vibração celebratória (`[50-30-50-30-120ms]`)
+
+A animação fecha sozinha em 3 s ou ao tocar na tela.
+
 ### Revisão de Erros
 
 Ao final de qualquer quiz com erros:
@@ -75,6 +85,38 @@ Ao final de qualquer quiz com erros:
 3. O aluno ouve os toques que errou antes de decidir iniciar o quiz de erros
 4. "Iniciar Quiz" começa um novo quiz restrito aos toques errados, no mesmo modo
 
+### Feedback Háptico e Sonoro
+
+Ao responder uma questão (em ambos os modos):
+
+| Resposta | Som | Vibração |
+|---|---|---|
+| Acerto | Dois tons ascendentes (C5 → G5) | Pulso curto — 40 ms |
+| Erro | Tom descendente (260 → 160 Hz) | Duplo — 80-50-80 ms |
+| Dominado | Arpejo de 4 notas (fanfarra) | Celebratório — 50-30-50-30-120 ms |
+
+Os sons são gerados via **Web Audio API** (zero arquivos extras). Ambos podem ser desativados independentemente na aba Informações → Configurações.
+
+### Tema Claro / Escuro
+
+- Botão 🌙 no header ativa o tema escuro; ☀️ volta ao claro
+- Na primeira abertura, detecta automaticamente `prefers-color-scheme` do sistema
+- Escolha salva em `localStorage` — persiste entre sessões
+- Transição suave de 0,3 s ao alternar
+- Cobertura completa: cards, navegação, botões, badges, resultado, histórico, configurações, revisão de erros, onboarding e animação de conquista
+
+### Onboarding de 3 Telas
+
+Aparece automaticamente **só na primeira abertura**. Bottom sheet animado com:
+
+| Tela | Conteúdo |
+|---|---|
+| 🎺 Bem-vindo | O que são os toques e o bizu |
+| 🧠 Treino inteligente | Explica SRS com badges Aprendendo → Bom → Dominado |
+| 🎯 Dois modos de treino | Clássico vs. Múltipla Escolha |
+
+Disponível a qualquer momento em Informações → "Ver introdução".
+
 ### Histórico de Simulados
 - Armazena os últimos 5 resultados com data, acertos e total
 - Exibido ao final de cada simulado
@@ -82,8 +124,9 @@ Ao final de qualquer quiz com erros:
 
 ### Informações
 - Foto do Pelotão Delta
-- Descrição do propósito do app
-- Aviso de uso educacional
+- Sobre o app e aviso de uso educacional
+- **Configurações:** toggles de Som e Vibração
+- Link "Ver introdução" para rever o onboarding
 - Link para suporte via WhatsApp
 
 ---
@@ -129,27 +172,29 @@ O app é construído com **HTML, CSS e JavaScript puros**, sem dependências de 
 ### Decisões técnicas relevantes
 
 **SRS com pesos combinados**
-A seleção de toques usa um pool ponderado: cada toque é inserido N vezes conforme seu peso (domínio + tempo). O pool é embaralhado com Fisher-Yates e os toques são extraídos em ordem, ignorando duplicatas. Isso garante que todos os toques possam aparecer, mas os mais fracos e mais esquecidos têm muito mais chance de ser selecionados primeiro.
+A seleção de toques usa um pool ponderado: cada toque é inserido N vezes conforme seu peso (domínio + tempo). O pool é embaralhado com Fisher-Yates e os toques são extraídos em ordem, ignorando duplicatas.
 
-**localStorage para métricas e histórico**
-Dois namespaces distintos:
-- `cefs-metricas` — objeto indexado por ID do toque, com acertos, erros, sequência, `ultimaVez` (ISO 8601) e domínio calculado
-- `cefs-historico` — array com os últimos 5 resultados de simulado
+**Web Audio API para sons**
+Sons de feedback gerados programaticamente — sem arquivos de áudio extras. Osciladores com envelopes de amplitude (`gain.gain.exponentialRampToValueAtTime`) produzem sons limpos e responsivos. Um único `AudioContext` é criado na primeira interação e reutilizado em todas as chamadas subsequentes.
+
+**CSS custom properties para tema**
+Variáveis (`--bg`, `--surface`, `--text-1/2/3`, `--border`, `--accent`, etc.) definidas em `:root` para o tema claro e sobrescritas em `[data-theme="dark"]`. Permite alternar o tema inteiro com um único `setAttribute` no `<html>`, sem re-renderizar nada.
+
+**localStorage — três namespaces**
+- `cefs-metricas` — objeto por ID do toque: acertos, erros, sequência, `ultimaVez` (ISO 8601), domínio
+- `cefs-historico` — últimos 5 resultados de simulado
+- `cefs-config` — preferências de som e vibração (`{som: true, haptico: true}`)
+- `cefs-tema` — preferência de tema (`"light"` | `"dark"`)
+- `cefs-onboarding` — flag de conclusão do onboarding
+
+**Confetti sem biblioteca**
+Canvas 2D com 90 partículas, cada uma com posição, velocidade, ângulo e cor aleatórios. A cada frame, `vy += 0.06` simula gravidade. `requestAnimationFrame` mantém a animação suave; `cancelAnimationFrame` para após 2,8 s para não consumir CPU desnecessariamente.
 
 **Fisher-Yates para embaralhamento**
-O método `.sort(() => Math.random() - 0.5)` produz distribuição estatisticamente enviesada. Fisher-Yates percorre o array de trás para frente trocando cada elemento por um índice aleatório dentro do intervalo restante, garantindo que todas as permutações sejam igualmente prováveis.
+Garante distribuição uniforme — `sort(() => Math.random() - 0.5)` produz distribuição estatisticamente enviesada.
 
 **Service Worker com cache completo**
-Todos os assets estáticos (HTML, CSS, JS, manifest, ícones, imagem e 15 arquivos de áudio) são pré-cacheados na instalação. A estratégia é *cache-first*: o app responde do cache sem fazer requisição de rede. Quando uma versão nova é publicada, o `activate` remove versões antigas automaticamente.
-
-**Delay adaptativo no modo MC**
-Acerto avança em 1,3 s. Erro aguarda 2,1 s para que o aluno tenha tempo de ler o bizu exibido no hint amarelo antes de ir para a próxima questão.
-
-**Ícones Lucide em vez de emojis**
-Emojis têm renderização inconsistente entre sistemas operacionais. Os ícones Lucide são SVGs vetoriais com traço uniforme, tamanho controlado por CSS e aparência idêntica em qualquer plataforma.
-
-**Lazy loading da imagem do pelotão**
-`loading="lazy"` e `decoding="async"` adiam o download da foto até o momento em que ela está prestes a entrar na viewport, economizando banda e acelerando o carregamento inicial.
+Estratégia *cache-first*. Todos os assets são pré-cacheados na instalação. O `activate` remove versões antigas automaticamente quando a versão do cache é incrementada.
 
 ---
 
@@ -157,9 +202,10 @@ Emojis têm renderização inconsistente entre sistemas operacionais. Os ícones
 
 ```
 toquesdecorneta/
-├── index.html          # Estrutura HTML, nav, toast de instalação
-├── script.js           # Lógica do app (lista, métricas, SRS, quiz, áudio, PWA)
-├── style.css           # Estilos e layout
+├── index.html          # Estrutura HTML, header com toggle de tema, nav, toast
+├── script.js           # Lógica completa: lista, SRS, quiz, métricas, feedback,
+│                       #   conquista, onboarding, tema, áudio, PWA
+├── style.css           # Estilos com CSS custom properties + bloco dark mode
 ├── sw.js               # Service Worker (cache offline)
 ├── manifest.json       # Configuração PWA (ícones, cores, modo standalone)
 ├── pelotao.jpg         # Foto do Pelotão Delta
@@ -178,4 +224,4 @@ toquesdecorneta/
 
 ---
 
-*Versão 1.6.0 — CEFS A 2026 · Pelotão Delta*
+*Versão 2.0.0 — CEFS A 2026 · Pelotão Delta*
