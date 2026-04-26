@@ -25,6 +25,7 @@ let erros = [];
 let audioAtual = null;
 let botaoAtual = null;
 let modoAtual = 'classico'; // 'classico' | 'multipla'
+let audioCtx = null;
 
 // --- ÁUDIO ---
 
@@ -86,6 +87,152 @@ function tocarAudio(caminho, botao) {
   }
 }
 
+// --- CONFIGURAÇÕES ---
+
+function getConfig() {
+  return JSON.parse(localStorage.getItem("cefs-config") || '{"som":true,"haptico":true}');
+}
+
+function salvarConfig(config) {
+  localStorage.setItem("cefs-config", JSON.stringify(config));
+}
+
+function toggleConfig(chave) {
+  const config = getConfig();
+  config[chave] = !config[chave];
+  salvarConfig(config);
+}
+
+// --- FEEDBACK ---
+
+function getAudioCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  return audioCtx;
+}
+
+function tocarSomAcerto() {
+  if (!getConfig().som) return;
+  const ctx = getAudioCtx();
+  const t = ctx.currentTime;
+  [523, 784].forEach((freq, i) => {
+    const osc  = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(0.22, t + i * 0.11);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + i * 0.11 + 0.18);
+    osc.start(t + i * 0.11);
+    osc.stop(t + i * 0.11 + 0.18);
+  });
+}
+
+function tocarSomErro() {
+  if (!getConfig().som) return;
+  const ctx = getAudioCtx();
+  const t = ctx.currentTime;
+  const osc  = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  osc.type = 'triangle';
+  osc.frequency.setValueAtTime(260, t);
+  osc.frequency.exponentialRampToValueAtTime(160, t + 0.22);
+  gain.gain.setValueAtTime(0.2, t);
+  gain.gain.exponentialRampToValueAtTime(0.001, t + 0.28);
+  osc.start(t);
+  osc.stop(t + 0.28);
+}
+
+function vibrar(padrao) {
+  if (!getConfig().haptico) return;
+  if ('vibrate' in navigator) navigator.vibrate(padrao);
+}
+
+function tocarSomConquista() {
+  if (!getConfig().som) return;
+  const ctx = getAudioCtx();
+  const t = ctx.currentTime;
+  [523, 659, 784, 1047].forEach((freq, i) => {
+    const osc  = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(0.2, t + i * 0.12);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + i * 0.12 + 0.28);
+    osc.start(t + i * 0.12);
+    osc.stop(t + i * 0.12 + 0.28);
+  });
+}
+
+function iniciarConfetti(canvas) {
+  const ctx = canvas.getContext('2d');
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const cores = ['#3b5bff', '#2ecc71', '#f5c542', '#ff6b35', '#e74c3c', '#9b59b6'];
+  const particulas = Array.from({ length: 90 }, () => ({
+    x:      Math.random() * canvas.width,
+    y:      Math.random() * canvas.height - canvas.height,
+    w:      Math.random() * 10 + 5,
+    h:      Math.random() * 6  + 3,
+    cor:    cores[Math.floor(Math.random() * cores.length)],
+    vx:     Math.random() * 4 - 2,
+    vy:     Math.random() * 3 + 1.5,
+    angulo: Math.random() * Math.PI * 2,
+    vang:   Math.random() * 0.15 - 0.075,
+  }));
+
+  let frame;
+  function animar() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particulas.forEach(p => {
+      p.x      += p.vx;
+      p.y      += p.vy;
+      p.angulo += p.vang;
+      p.vy     += 0.06;
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.angulo);
+      ctx.fillStyle = p.cor;
+      ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+      ctx.restore();
+    });
+    frame = requestAnimationFrame(animar);
+  }
+  animar();
+  setTimeout(() => cancelAnimationFrame(frame), 2800);
+}
+
+function mostrarConquistaDominado(nomeToque) {
+  vibrar([50, 30, 50, 30, 120]);
+  tocarSomConquista();
+
+  const overlay = document.createElement('div');
+  overlay.className = 'conquista-overlay';
+  overlay.innerHTML = `
+    <canvas class="confetti-canvas"></canvas>
+    <div class="conquista-card">
+      <div class="conquista-icon">🏆</div>
+      <h2>Dominado!</h2>
+      <p><strong>${nomeToque}</strong> está dominado</p>
+      <small>Toque para continuar</small>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+
+  iniciarConfetti(overlay.querySelector('.confetti-canvas'));
+
+  const fechar = () => {
+    overlay.classList.add('conquista-saindo');
+    setTimeout(() => overlay.remove(), 300);
+  };
+  overlay.addEventListener('click', fechar);
+  setTimeout(fechar, 3000);
+}
+
 // --- MÉTRICAS ---
 
 function getMetricas() {
@@ -109,12 +256,14 @@ function calcularDominio(sequencia) {
 function atualizarMetrica(toqueId, acertou) {
   const metricas = getMetricas();
   const m = metricas[toqueId] || { acertos: 0, erros: 0, sequencia: 0, ultimaVez: null, dominio: "aprendendo" };
+  const dominioAnterior = m.dominio;
   if (acertou) { m.acertos++; m.sequencia++; }
   else         { m.erros++;   m.sequencia = 0; }
   m.ultimaVez = new Date().toISOString();
   m.dominio = calcularDominio(m.sequencia);
   metricas[toqueId] = m;
   salvarMetricas(metricas);
+  return m.dominio === 'dominado' && dominioAnterior !== 'dominado';
 }
 
 function tempoRelativo(iso) {
@@ -421,16 +570,21 @@ function mostrarQuestaoMC() {
 
 function responderMC(acertou, botaoClicado) {
   const toque = provaAtual[indiceAtual];
-  atualizarMetrica(toque.id, acertou);
+  const novoDominio = atualizarMetrica(toque.id, acertou);
   const todosOsBotoes = document.querySelectorAll('.btn-opcao');
   todosOsBotoes.forEach(btn => { btn.disabled = true; });
 
   if (acertou) {
     botaoClicado.classList.add('opcao-correta');
     acertos++;
+    vibrar([40]);
+    tocarSomAcerto();
+    if (novoDominio) setTimeout(() => mostrarConquistaDominado(toque.nome), 300);
   } else {
     botaoClicado.classList.add('opcao-errada');
     erros.push(toque);
+    vibrar([80, 50, 80]);
+    tocarSomErro();
     todosOsBotoes.forEach(btn => {
       if (btn.dataset.correto === 'true') btn.classList.add('opcao-correta');
     });
@@ -510,11 +664,16 @@ function mostrarResposta() {
 
 function responder(acertou) {
   const toque = provaAtual[indiceAtual];
-  atualizarMetrica(toque.id, acertou);
+  const novoDominio = atualizarMetrica(toque.id, acertou);
   if (acertou) {
     acertos++;
+    vibrar([40]);
+    tocarSomAcerto();
+    if (novoDominio) setTimeout(() => mostrarConquistaDominado(toque.nome), 300);
   } else {
     erros.push(toque);
+    vibrar([80, 50, 80]);
+    tocarSomErro();
   }
 
   indiceAtual++;
@@ -652,6 +811,30 @@ function mostrarInfo() {
         <p>A prática através do simulado ajuda na fixação dos bizus e na agilidade de resposta durante as atividades e na prova.</p>
       </div>
 
+      <div class="card info-card config-card">
+        <h3>Configurações</h3>
+        <div class="toggle-row">
+          <div class="toggle-label">
+            <strong>Som</strong>
+            <small>Efeitos sonoros ao responder</small>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" ${getConfig().som ? 'checked' : ''} onchange="toggleConfig('som')">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-label">
+            <strong>Vibração</strong>
+            <small>Feedback háptico ao responder</small>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" ${getConfig().haptico ? 'checked' : ''} onchange="toggleConfig('haptico')">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+
       <div class="aviso-seguranca">
         <div class="aviso-icon"><i data-lucide="alert-triangle"></i></div>
         <div>
@@ -664,10 +847,11 @@ function mostrarInfo() {
         <p>DESENVOLVIDO POR</p>
         <div class="dev-info">
           <strong>Pelotão Delta</strong>
-          <p>Versão 1.6.0 (2026)</p>
+          <p>Versão 2.0.0 (2026)</p>
         </div>
         <div class="info-links">
           <a href="https://wa.me/5531996338032?text=Olá! Tenho uma dúvida/sugestão sobre o App de Toques de Corneta." target="_blank" rel="noopener noreferrer">Suporte e sugestão</a>
+          <a href="#" onclick="event.preventDefault(); localStorage.removeItem('cefs-onboarding'); mostrarOnboarding();">Ver introdução</a>
         </div>
       </div>
     </div>
@@ -676,9 +860,131 @@ function mostrarInfo() {
   lucide.createIcons();
 }
 
+// --- TEMA ---
+
+function getTemaSalvo() {
+  return localStorage.getItem("cefs-tema") ||
+    (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+}
+
+function aplicarTema(tema) {
+  document.documentElement.setAttribute('data-theme', tema);
+  localStorage.setItem("cefs-tema", tema);
+  const btn = document.getElementById('btnTema');
+  if (!btn) return;
+  btn.innerHTML = tema === 'dark'
+    ? '<i data-lucide="sun"></i>'
+    : '<i data-lucide="moon"></i>';
+  lucide.createIcons();
+}
+
+function toggleTema() {
+  const atual = document.documentElement.getAttribute('data-theme') || 'light';
+  aplicarTema(atual === 'dark' ? 'light' : 'dark');
+}
+
+// --- ONBOARDING ---
+
+const TELAS_ONBOARDING = [
+  {
+    icone: '🎺',
+    titulo: 'Bem-vindo ao\nToques de Corneta',
+    texto: 'Aprenda a identificar os <strong>15 toques militares</strong> do CEFS A 2026. Cada toque tem um <em>bizu</em> — uma frase que ajuda a memorizar o som.',
+    extra: '',
+  },
+  {
+    icone: '🧠',
+    titulo: 'Treino\ninteligente',
+    texto: 'O app usa <strong>repetição espaçada</strong>: toques que você erra voltam mais cedo, enquanto os que você domina aparecem menos.',
+    extra: `<div class="ob-niveis">
+      <span class="badge-dominio badge-aprendendo">Aprendendo</span>
+      <span class="ob-seta">→</span>
+      <span class="badge-dominio badge-bom">Bom</span>
+      <span class="ob-seta">→</span>
+      <span class="badge-dominio badge-dominado">Dominado</span>
+    </div>`,
+  },
+  {
+    icone: '🎯',
+    titulo: 'Dois modos\nde treino',
+    texto: '<strong>Modo Clássico:</strong> ouça e identifique o toque.<br><br><strong>Múltipla Escolha:</strong> 4 alternativas com feedback imediato e dica do bizu ao errar.',
+    extra: '',
+  },
+];
+
+let telaOnboarding = 0;
+
+function verificarOnboarding() {
+  if (!localStorage.getItem("cefs-onboarding")) mostrarOnboarding();
+}
+
+function mostrarOnboarding() {
+  telaOnboarding = 0;
+  const overlay = document.createElement('div');
+  overlay.className = 'onboarding-overlay';
+  overlay.innerHTML = '<div class="onboarding-card"></div>';
+  document.body.appendChild(overlay);
+  renderTelaOnboarding();
+}
+
+function renderTelaOnboarding() {
+  const card = document.querySelector('.onboarding-card');
+  if (!card) return;
+  const tela  = TELAS_ONBOARDING[telaOnboarding];
+  const total = TELAS_ONBOARDING.length;
+  const ultima = telaOnboarding === total - 1;
+
+  const dots = Array.from({ length: total }, (_, i) =>
+    `<span class="ob-dot ${i === telaOnboarding ? 'ob-dot-ativo' : ''}"></span>`
+  ).join('');
+
+  card.innerHTML = `
+    <div class="ob-header">
+      <div class="ob-dots">${dots}</div>
+      ${!ultima
+        ? `<button class="ob-pular" onclick="concluirOnboarding()">Pular</button>`
+        : '<div></div>'}
+    </div>
+    <div class="ob-corpo">
+      <div class="ob-icone">${tela.icone}</div>
+      <h2 class="ob-titulo">${tela.titulo.replace('\n', '<br>')}</h2>
+      <p class="ob-texto">${tela.texto}</p>
+      ${tela.extra}
+    </div>
+    <button class="btn-primary ob-btn"
+            onclick="${ultima ? 'concluirOnboarding()' : 'proximaTelaOnboarding()'}">
+      ${ultima ? '🚀 Começar' : 'Próximo →'}
+    </button>
+  `;
+}
+
+function proximaTelaOnboarding() {
+  const card = document.querySelector('.onboarding-card');
+  if (!card) return;
+  card.style.cssText = 'opacity:0;transform:translateY(10px);transition:opacity .15s,transform .15s';
+  setTimeout(() => {
+    telaOnboarding++;
+    renderTelaOnboarding();
+    requestAnimationFrame(() => {
+      card.style.cssText = 'opacity:1;transform:translateY(0);transition:opacity .2s,transform .2s';
+    });
+  }, 150);
+}
+
+function concluirOnboarding() {
+  localStorage.setItem("cefs-onboarding", "1");
+  const overlay = document.querySelector('.onboarding-overlay');
+  if (overlay) {
+    overlay.classList.add('ob-saindo');
+    setTimeout(() => overlay.remove(), 350);
+  }
+}
+
 // --- INIT ---
 
+aplicarTema(getTemaSalvo());
 mostrarLista();
+verificarOnboarding();
 
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("sw.js");
