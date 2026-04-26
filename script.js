@@ -27,6 +27,43 @@ let botaoAtual = null;
 let modoAtual = 'classico'; // 'classico' | 'multipla'
 let audioCtx = null;
 
+// --- MODAL ---
+
+function mostrarModal(mensagem) {
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = `
+    <div class="modal-card">
+      <p class="modal-mensagem">${mensagem}</p>
+      <div class="modal-acoes">
+        <button class="modal-btn-ok">OK</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  overlay.querySelector('.modal-btn-ok').addEventListener('click', () => overlay.remove());
+}
+
+function mostrarModalConfirm(mensagem, onConfirm) {
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = `
+    <div class="modal-card">
+      <p class="modal-mensagem">${mensagem}</p>
+      <div class="modal-acoes">
+        <button class="modal-btn-cancelar">Cancelar</button>
+        <button class="modal-btn-confirmar">Sair</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  overlay.querySelector('.modal-btn-cancelar').addEventListener('click', () => overlay.remove());
+  overlay.querySelector('.modal-btn-confirmar').addEventListener('click', () => {
+    overlay.remove();
+    onConfirm();
+  });
+}
+
 // --- ÁUDIO ---
 
 function icon(nome) {
@@ -77,7 +114,7 @@ function tocarAudio(caminho, botao) {
   audioAtual.addEventListener("error", () => {
     setBotao(botao, "play", "Reproduzir", false);
     botaoAtual = null;
-    alert("Não foi possível carregar o áudio. Verifique sua conexão ou reinstale o app.");
+    mostrarModal("Não foi possível carregar o áudio. Verifique sua conexão ou reinstale o app.");
   }, { once: true });
 
   if (audioAtual.readyState >= 3) {
@@ -345,8 +382,11 @@ function setNavAtiva(aba) {
 
 function navegarPara(destino) {
   if (provaAtual.length > 0 && indiceAtual < provaAtual.length) {
-    if (!confirm("Você está no meio do simulado. Deseja sair e perder o progresso?")) return;
-    resetarProva();
+    mostrarModalConfirm("Você está no meio do simulado. Deseja sair e perder o progresso?", () => {
+      resetarProva();
+      destino();
+    });
+    return;
   }
   destino();
 }
@@ -851,7 +891,6 @@ function mostrarInfo() {
           <p>Versão 2.0.0 (2026)</p>
         </div>
         <div class="info-links">
-          <a href="https://wa.me/5531996338032?text=Olá! Tenho uma dúvida/sugestão sobre o App de Toques de Corneta." target="_blank" rel="noopener noreferrer">Suporte e sugestão</a>
           <a href="#" onclick="event.preventDefault(); localStorage.removeItem('cefs-onboarding'); mostrarOnboarding();">Ver introdução</a>
         </div>
       </div>
@@ -909,6 +948,12 @@ const TELAS_ONBOARDING = [
     icone: '🎯',
     titulo: 'Dois modos\nde treino',
     texto: '<strong>Modo Clássico:</strong> ouça e identifique o toque.<br><br><strong>Múltipla Escolha:</strong> 4 alternativas com feedback imediato e dica do bizu ao errar.',
+    extra: '',
+  },
+  {
+    icone: 'ℹ️',
+    titulo: 'Aba\nInformações',
+    texto: 'Na aba <strong>Informações</strong> você encontra configurações do sistema — como ativar ou desativar sons e vibração — e suas <strong>métricas de desempenho</strong> por toque, com histórico de simulados.',
     extra: '',
   },
 ];
