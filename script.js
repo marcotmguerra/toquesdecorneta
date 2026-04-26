@@ -127,6 +127,49 @@ function tempoRelativo(iso) {
 
 const DOMINIO_LABEL = { aprendendo: "Aprendendo", bom: "Bom", dominado: "Dominado" };
 
+// --- SRS ---
+
+function calcularPeso(m) {
+  if (!m) return 5; // nunca praticado → máxima prioridade
+
+  const pesoDominio = { aprendendo: 3, bom: 2, dominado: 1 };
+  let peso = pesoDominio[m.dominio] || 3;
+
+  if (m.ultimaVez) {
+    const dias = (Date.now() - new Date(m.ultimaVez).getTime()) / 86400000;
+    if      (dias > 7) peso += 2; // atrasado: urgente
+    else if (dias > 3) peso += 1; // próximo de vencer
+    else if (dias < 1) peso = Math.max(1, peso - 1); // revisado hoje: leve redução
+  }
+
+  return peso;
+}
+
+function selecionarToquesPonderados(total) {
+  const metricas = getMetricas();
+
+  // Cria pool ponderado: cada toque aparece N vezes conforme seu peso
+  const pool = [];
+  toques.forEach(t => {
+    const peso = calcularPeso(metricas[t.id]);
+    for (let i = 0; i < peso; i++) pool.push(t);
+  });
+
+  // Embaralha e extrai toques únicos na ordem resultante
+  const shuffled = embaralhar(pool);
+  const vistos = new Set();
+  const selecionados = [];
+  for (const t of shuffled) {
+    if (!vistos.has(t.id)) {
+      vistos.add(t.id);
+      selecionados.push(t);
+      if (selecionados.length === total) break;
+    }
+  }
+
+  return selecionados;
+}
+
 // --- UTILITÁRIOS ---
 
 function embaralhar(array) {
@@ -276,6 +319,10 @@ function selecionarModo(modo) {
     <div class="card prova-card">
       <h2>${titulo}</h2>
       <p class="subtitulo-simulado">Quantas questões?</p>
+      <div class="aviso-adaptativo">
+        <i data-lucide="brain"></i>
+        <span>Toques mais fracos e esquecidos aparecem com mais frequência</span>
+      </div>
       <div class="opcoes-simulado">
         <button class="btn-primary" onclick="iniciarProva(5)">5 questões</button>
         <button class="btn-primary" onclick="iniciarProva(10)">10 questões</button>
@@ -284,10 +331,11 @@ function selecionarModo(modo) {
       </div>
     </div>
   `;
+  lucide.createIcons();
 }
 
 function iniciarProva(total) {
-  provaAtual = embaralhar(toques).slice(0, total);
+  provaAtual = selecionarToquesPonderados(total);
   indiceAtual = 0;
   acertos = 0;
   erros = [];
@@ -308,8 +356,11 @@ function mostrarQuestao() {
   const progresso = (indiceAtual / total) * 100;
 
   conteudo.innerHTML = `
-    <div class="progress-bar">
-      <div class="progress-fill" style="width: ${progresso}%"></div>
+    <div class="progress-topo">
+      <div class="progress-bar">
+        <div class="progress-fill" style="width: ${progresso}%"></div>
+      </div>
+      <span class="badge-srs">🎯 Adaptativo</span>
     </div>
     <div class="card prova-card">
       <h2>Toque ${indiceAtual + 1} de ${total}</h2>
@@ -345,8 +396,11 @@ function mostrarQuestaoMC() {
   `).join('');
 
   conteudo.innerHTML = `
-    <div class="progress-bar">
-      <div class="progress-fill" style="width: ${progresso}%"></div>
+    <div class="progress-topo">
+      <div class="progress-bar">
+        <div class="progress-fill" style="width: ${progresso}%"></div>
+      </div>
+      <span class="badge-srs">🎯 Adaptativo</span>
     </div>
     <div class="card prova-card">
       <p class="questao-label">Questão ${indiceAtual + 1} de ${total}</p>
@@ -413,8 +467,11 @@ function mostrarResposta() {
   const progresso = (indiceAtual / total) * 100;
 
   conteudo.innerHTML = `
-    <div class="progress-bar">
-      <div class="progress-fill" style="width: ${progresso}%"></div>
+    <div class="progress-topo">
+      <div class="progress-bar">
+        <div class="progress-fill" style="width: ${progresso}%"></div>
+      </div>
+      <span class="badge-srs">🎯 Adaptativo</span>
     </div>
     <div class="card prova-card">
       <h2>${toque.nome}</h2>
@@ -607,7 +664,7 @@ function mostrarInfo() {
         <p>DESENVOLVIDO POR</p>
         <div class="dev-info">
           <strong>Pelotão Delta</strong>
-          <p>Versão 1.5.0 (2026)</p>
+          <p>Versão 1.6.0 (2026)</p>
         </div>
         <div class="info-links">
           <a href="https://wa.me/5531996338032?text=Olá! Tenho uma dúvida/sugestão sobre o App de Toques de Corneta." target="_blank" rel="noopener noreferrer">Suporte e sugestão</a>

@@ -325,11 +325,18 @@ main {
 
 /* BARRA DE PROGRESSO */
 
+.progress-topo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
 .progress-bar {
+  flex: 1;
   height: 6px;
   background: #e0e0e0;
   border-radius: 3px;
-  margin-bottom: 16px;
   overflow: hidden;
 }
 
@@ -338,6 +345,14 @@ main {
   background: #3b5bff;
   border-radius: 3px;
   transition: width 0.3s ease;
+}
+
+.badge-srs {
+  font-size: 10px;
+  font-weight: 700;
+  color: #3b5bff;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 /* RESULTADO COLORIDO */
@@ -547,6 +562,28 @@ main {
 
 .btn-secundario:active {
   transform: scale(0.97);
+}
+
+/* AVISO ADAPTATIVO */
+
+.aviso-adaptativo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f0f3ff;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: #3b5bff;
+  margin-bottom: 16px;
+  text-align: left;
+}
+
+.aviso-adaptativo svg {
+  width: 16px;
+  height: 16px;
+  stroke: #3b5bff;
+  flex-shrink: 0;
 }
 
 /* MÚLTIPLA ESCOLHA */

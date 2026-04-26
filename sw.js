@@ -1,4 +1,4 @@
-const CACHE_NAME = "cefs-cache-v5";
+const CACHE_NAME = "cefs-cache-v6";
 
 const urlsToCache = [
   "/",
