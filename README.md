@@ -6,35 +6,79 @@ Aplicativo web progressivo (PWA) para auxiliar os alunos do **CEFS A 2026 – Pe
 
 ## O que o app faz
 
-O app reúne os 15 toques de corneta regulamentares utilizados nas atividades do pelotão. Para cada toque, o aluno pode ouvir o áudio original e consultar o **bizu** — uma frase mnemônica que ajuda a memorizar o som. Além da lista de referência, o app oferece um simulado interativo para testar o conhecimento antes das provas e atividades.
+O app reúne os 15 toques de corneta regulamentares utilizados nas atividades do pelotão. Para cada toque, o aluno pode ouvir o áudio original e consultar o **bizu** — uma frase mnemônica que ajuda a memorizar o som.
+
+Além da lista de referência, o app oferece um sistema de treino progressivo com **repetição espaçada (SRS)**, dois modos de quiz, métricas individuais por toque e revisão direcionada de erros.
 
 ---
 
 ## Funcionalidades
 
 ### Lista de Toques
-- Exibe todos os 15 toques de corneta em cards individuais
-- Cada card mostra o nome do toque e o bizu correspondente
-- Botão de reprodução com 3 estados visuais:
-  - **Reproduzir** — pronto para tocar
-  - **Carregando…** — buscando o arquivo de áudio
-  - **Reproduzindo…** — áudio em execução (clicar novamente para parar)
+- Exibe todos os 15 toques em cards individuais com nome e bizu
+- Botão de reprodução com 3 estados visuais: Reproduzir → Carregando → Reproduzindo
 - Ao iniciar um novo toque, o anterior é pausado automaticamente
+- Cada card exibe as **métricas do aluno** para aquele toque:
+  - Badge de nível de domínio (Aprendendo / Bom / Dominado)
+  - Taxa de acerto em porcentagem
+  - Sequência de acertos consecutivos (🔥 N seguidos)
+  - Tempo desde a última revisão ("hoje", "ontem", "há N dias")
+- **Card de progresso geral** no topo com barra segmentada mostrando a distribuição dos 15 toques entre os três níveis
 
-### Simulado
-- Antes de iniciar, o aluno escolhe a quantidade de questões: **5**, **10** ou **todas (15)**
-- As questões são sorteadas aleatoriamente com o algoritmo **Fisher-Yates**, garantindo distribuição uniforme
-- Fluxo de cada questão:
-  1. O aluno ouve o toque sem ver o nome
-  2. Clica em **Mostrar Resposta** para revelar o nome e o bizu
-  3. Avalia se acertou ou errou (autoavaliação)
-- **Barra de progresso** visual no topo indica o avanço dentro do simulado
-- Ao final, é exibido o resultado com **código de cor**:
-  - Verde — 80% ou mais de acertos
-  - Laranja — entre 50% e 79%
-  - Vermelho — abaixo de 50%
-- Se houver erros, aparece o botão **Revisar erros** para repetir apenas os toques que o aluno não acertou
-- O histórico das últimas 5 provas é salvo localmente e exibido ao final de cada simulado
+### Treino — Modos de Quiz
+
+Antes de iniciar, o aluno escolhe o **modo** e depois a **quantidade de questões** (5, 10 ou todas).
+
+**Modo Clássico**
+1. O aluno ouve o toque sem ver o nome
+2. Clica em "Mostrar Resposta" para revelar nome e bizu
+3. Autoavalia se acertou ou errou
+
+**Modo Múltipla Escolha**
+1. O aluno ouve o toque
+2. Escolhe entre 4 alternativas embaralhadas
+3. Feedback imediato: verde para acerto, vermelho para erro
+4. Em caso de erro, a alternativa correta é destacada e o **bizu aparece em destaque** para reforço
+5. Avança automaticamente (1,3 s no acerto · 2,1 s no erro para leitura do bizu)
+
+### Dificuldade Adaptativa (SRS)
+
+Em ambos os modos, a seleção de toques não é aleatória — usa **repetição espaçada** com dois fatores:
+
+| Fator | Detalhe |
+|---|---|
+| Nível de domínio | Aprendendo → peso 3 · Bom → peso 2 · Dominado → peso 1 |
+| Tempo desde a última revisão | Não visto há > 7 dias → +2 · > 3 dias → +1 · Revisado hoje → −1 |
+
+Toques mais fracos e mais esquecidos têm maior probabilidade de ser selecionados para a sessão. Um toque "Aprendendo" não revisado há 8 dias tem peso 5 — cinco vezes mais provável de aparecer do que um "Dominado" revisado hoje. O badge **🎯 Adaptativo** aparece na barra de progresso durante o quiz.
+
+### Métricas por Toque
+
+Cada toque possui um registro salvo localmente com:
+- Total de acertos e erros
+- Sequência atual de acertos consecutivos
+- Data e hora da última revisão
+- Nível de domínio calculado automaticamente
+
+**Progressão de domínio:**
+- **Aprendendo** — sequência de acertos < 3
+- **Bom** — sequência entre 3 e 5
+- **Dominado** — sequência ≥ 6
+
+Qualquer erro zera a sequência e o nível volta para Aprendendo.
+
+### Revisão de Erros
+
+Ao final de qualquer quiz com erros:
+1. O botão "Praticar N erro(s)" abre uma **tela dedicada de revisão**
+2. A tela lista cada toque errado com nome, bizu e botão de escuta individual
+3. O aluno ouve os toques que errou antes de decidir iniciar o quiz de erros
+4. "Iniciar Quiz" começa um novo quiz restrito aos toques errados, no mesmo modo
+
+### Histórico de Simulados
+- Armazena os últimos 5 resultados com data, acertos e total
+- Exibido ao final de cada simulado
+- Persiste entre sessões via `localStorage`
 
 ### Informações
 - Foto do Pelotão Delta
@@ -82,40 +126,30 @@ Após instalado, o app funciona **totalmente offline** — todos os áudios e im
 
 O app é construído com **HTML, CSS e JavaScript puros**, sem dependências de frameworks. Essa escolha mantém o projeto leve, rápido e fácil de manter.
 
-### Por que sem framework?
-
-- O app tem escopo bem definido e pequeno — nenhuma abstração adicional agrega valor real
-- Zero tempo de build, zero configuração de bundler
-- Carrega instantaneamente, mesmo em conexões lentas
-- Qualquer pessoa com conhecimento básico de web consegue ler e modificar o código
-
 ### Decisões técnicas relevantes
 
+**SRS com pesos combinados**
+A seleção de toques usa um pool ponderado: cada toque é inserido N vezes conforme seu peso (domínio + tempo). O pool é embaralhado com Fisher-Yates e os toques são extraídos em ordem, ignorando duplicatas. Isso garante que todos os toques possam aparecer, mas os mais fracos e mais esquecidos têm muito mais chance de ser selecionados primeiro.
+
+**localStorage para métricas e histórico**
+Dois namespaces distintos:
+- `cefs-metricas` — objeto indexado por ID do toque, com acertos, erros, sequência, `ultimaVez` (ISO 8601) e domínio calculado
+- `cefs-historico` — array com os últimos 5 resultados de simulado
+
 **Fisher-Yates para embaralhamento**
-O método `.sort(() => Math.random() - 0.5)` produz distribuição estatisticamente enviesada — algumas questões aparecem com muito mais frequência do que outras. O algoritmo Fisher-Yates percorre o array de trás para frente trocando cada elemento por um índice aleatório dentro do intervalo restante, garantindo que todas as permutações sejam igualmente prováveis.
+O método `.sort(() => Math.random() - 0.5)` produz distribuição estatisticamente enviesada. Fisher-Yates percorre o array de trás para frente trocando cada elemento por um índice aleatório dentro do intervalo restante, garantindo que todas as permutações sejam igualmente prováveis.
 
 **Service Worker com cache completo**
-Todos os assets estáticos (HTML, CSS, JS, manifest, ícones, imagem do pelotão e os 15 arquivos de áudio) são pré-cacheados na instalação do Service Worker. A estratégia é *cache-first*: o app responde do cache sem fazer nenhuma requisição de rede, o que garante funcionamento offline real e carregamento instantâneo em visitas subsequentes. Quando o cache é atualizado (versão nova), o `activate` remove versões antigas automaticamente.
+Todos os assets estáticos (HTML, CSS, JS, manifest, ícones, imagem e 15 arquivos de áudio) são pré-cacheados na instalação. A estratégia é *cache-first*: o app responde do cache sem fazer requisição de rede. Quando uma versão nova é publicada, o `activate` remove versões antigas automaticamente.
 
-**Estados visuais do botão de áudio**
-O botão passa por três estados distintos gerenciados pela função `setBotao()`:
-1. `play` — ocioso, pronto para reproduzir
-2. `loader-2` — carregando o arquivo (botão desabilitado)
-3. `square` — reproduzindo (botão habilitado; clicar para ou)
-
-A transição de *carregando* para *reproduzindo* ocorre no evento `canplay`, que o browser dispara quando já há dados suficientes para começar a tocar sem interrupção. O evento `ended` restaura o botão ao estado inicial. A variável `botaoAtual` rastreia qual botão está ativo para restaurá-lo caso o usuário inicie outro toque antes do atual terminar.
-
-**localStorage para histórico**
-Os resultados dos simulados são persistidos com `localStorage` usando a chave `cefs-historico`. São mantidos no máximo 5 registros — quando o limite é atingido, o mais antigo é removido com `Array.shift()`. Isso evita crescimento indefinido de dados e mantém o histórico relevante e recente.
+**Delay adaptativo no modo MC**
+Acerto avança em 1,3 s. Erro aguarda 2,1 s para que o aluno tenha tempo de ler o bizu exibido no hint amarelo antes de ir para a próxima questão.
 
 **Ícones Lucide em vez de emojis**
-Emojis têm renderização inconsistente entre sistemas operacionais, fabricantes de dispositivos e versões de SO. O mesmo emoji pode ter cor, proporção e estilo completamente diferentes no iOS, Android e Windows. Os ícones Lucide são SVGs vetoriais com traço uniforme (`stroke-width: 2.5`), tamanho controlado por CSS e aparência idêntica em qualquer plataforma. A biblioteca é carregada via CDN (UMD) e os ícones são inicializados com `lucide.createIcons()` após cada atualização do DOM.
+Emojis têm renderização inconsistente entre sistemas operacionais. Os ícones Lucide são SVGs vetoriais com traço uniforme, tamanho controlado por CSS e aparência idêntica em qualquer plataforma.
 
 **Lazy loading da imagem do pelotão**
-A foto `pelotao.jpg` só é exibida na aba Informações. Com `loading="lazy"` e `decoding="async"`, o browser adia o download até o momento em que o elemento está prestes a entrar na viewport, economizando banda e acelerando o carregamento inicial.
-
-**Carregamento assíncrono da fonte**
-A fonte Inter é carregada com `media="print"` e `onload="this.media='all'"`, uma técnica que impede o bloqueio de renderização: o browser não precisa esperar a fonte carregar para exibir o conteúdo. Um `<noscript>` garante o fallback para ambientes sem JavaScript.
+`loading="lazy"` e `decoding="async"` adiam o download da foto até o momento em que ela está prestes a entrar na viewport, economizando banda e acelerando o carregamento inicial.
 
 ---
 
@@ -124,7 +158,7 @@ A fonte Inter é carregada com `media="print"` e `onload="this.media='all'"`, um
 ```
 toquesdecorneta/
 ├── index.html          # Estrutura HTML, nav, toast de instalação
-├── script.js           # Lógica do app (lista, simulado, áudio, PWA)
+├── script.js           # Lógica do app (lista, métricas, SRS, quiz, áudio, PWA)
 ├── style.css           # Estilos e layout
 ├── sw.js               # Service Worker (cache offline)
 ├── manifest.json       # Configuração PWA (ícones, cores, modo standalone)
@@ -144,4 +178,4 @@ toquesdecorneta/
 
 ---
 
-*Versão 1.2.0 — CEFS A 2026 · Pelotão Delta*
+*Versão 1.6.0 — CEFS A 2026 · Pelotão Delta*
