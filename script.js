@@ -27,6 +27,43 @@ let botaoAtual = null;
 let modoAtual = 'classico'; // 'classico' | 'multipla'
 let audioCtx = null;
 
+// --- MODAL ---
+
+function mostrarModal(mensagem) {
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = `
+    <div class="modal-card">
+      <p class="modal-mensagem">${mensagem}</p>
+      <div class="modal-acoes">
+        <button class="modal-btn-ok">OK</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  overlay.querySelector('.modal-btn-ok').addEventListener('click', () => overlay.remove());
+}
+
+function mostrarModalConfirm(mensagem, onConfirm) {
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = `
+    <div class="modal-card">
+      <p class="modal-mensagem">${mensagem}</p>
+      <div class="modal-acoes">
+        <button class="modal-btn-cancelar">Cancelar</button>
+        <button class="modal-btn-confirmar">Sair</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  overlay.querySelector('.modal-btn-cancelar').addEventListener('click', () => overlay.remove());
+  overlay.querySelector('.modal-btn-confirmar').addEventListener('click', () => {
+    overlay.remove();
+    onConfirm();
+  });
+}
+
 // --- ÁUDIO ---
 
 function icon(nome) {
@@ -77,7 +114,7 @@ function tocarAudio(caminho, botao) {
   audioAtual.addEventListener("error", () => {
     setBotao(botao, "play", "Reproduzir", false);
     botaoAtual = null;
-    alert("Não foi possível carregar o áudio. Verifique sua conexão ou reinstale o app.");
+    mostrarModal("Não foi possível carregar o áudio. Verifique sua conexão ou reinstale o app.");
   }, { once: true });
 
   if (audioAtual.readyState >= 3) {
@@ -215,13 +252,14 @@ function mostrarConquistaDominado(nomeToque) {
   overlay.innerHTML = `
     <canvas class="confetti-canvas"></canvas>
     <div class="conquista-card">
-      <div class="conquista-icon">🏆</div>
+      <div class="conquista-icon"><i data-lucide="trophy"></i></div>
       <h2>Dominado!</h2>
       <p><strong>${nomeToque}</strong> está dominado</p>
       <small>Toque para continuar</small>
     </div>
   `;
   document.body.appendChild(overlay);
+  lucide.createIcons();
 
   iniciarConfetti(overlay.querySelector('.confetti-canvas'));
 
@@ -345,8 +383,11 @@ function setNavAtiva(aba) {
 
 function navegarPara(destino) {
   if (provaAtual.length > 0 && indiceAtual < provaAtual.length) {
-    if (!confirm("Você está no meio do simulado. Deseja sair e perder o progresso?")) return;
-    resetarProva();
+    mostrarModalConfirm("Você está no meio do simulado. Deseja sair e perder o progresso?", () => {
+      resetarProva();
+      destino();
+    });
+    return;
   }
   destino();
 }
@@ -398,7 +439,7 @@ function mostrarLista() {
       <div class="card-metricas">
         <span class="badge-dominio badge-${m.dominio}">${DOMINIO_LABEL[m.dominio]}</span>
         ${taxa !== null ? `<span class="metrica-info">${taxa}% acerto</span>` : ''}
-        ${m.sequencia >= 2 ? `<span class="metrica-sequencia">🔥 ${m.sequencia} seguidos</span>` : ''}
+        ${m.sequencia >= 2 ? `<span class="metrica-sequencia"><i data-lucide="flame"></i> ${m.sequencia} seguidos</span>` : ''}
         ${quando ? `<span class="metrica-info">${quando}</span>` : ''}
       </div>
     `;
@@ -508,7 +549,7 @@ function mostrarQuestao() {
       <div class="progress-bar">
         <div class="progress-fill" style="width: ${progresso}%"></div>
       </div>
-      <span class="badge-srs">🎯 Adaptativo</span>
+      <span class="badge-srs"><i data-lucide="target"></i> Adaptativo</span>
     </div>
     <div class="card prova-card">
       <h2>Toque ${indiceAtual + 1} de ${total}</h2>
@@ -548,7 +589,7 @@ function mostrarQuestaoMC() {
       <div class="progress-bar">
         <div class="progress-fill" style="width: ${progresso}%"></div>
       </div>
-      <span class="badge-srs">🎯 Adaptativo</span>
+      <span class="badge-srs"><i data-lucide="target"></i> Adaptativo</span>
     </div>
     <div class="card prova-card">
       <p class="questao-label">Questão ${indiceAtual + 1} de ${total}</p>
@@ -624,7 +665,7 @@ function mostrarResposta() {
       <div class="progress-bar">
         <div class="progress-fill" style="width: ${progresso}%"></div>
       </div>
-      <span class="badge-srs">🎯 Adaptativo</span>
+      <span class="badge-srs"><i data-lucide="target"></i> Adaptativo</span>
     </div>
     <div class="card prova-card">
       <h2>${toque.nome}</h2>
@@ -851,7 +892,6 @@ function mostrarInfo() {
           <p>Versão 2.0.0 (2026)</p>
         </div>
         <div class="info-links">
-          <a href="https://wa.me/5531996338032?text=Olá! Tenho uma dúvida/sugestão sobre o App de Toques de Corneta." target="_blank" rel="noopener noreferrer">Suporte e sugestão</a>
           <a href="#" onclick="event.preventDefault(); localStorage.removeItem('cefs-onboarding'); mostrarOnboarding();">Ver introdução</a>
         </div>
       </div>
@@ -888,13 +928,13 @@ function toggleTema() {
 
 const TELAS_ONBOARDING = [
   {
-    icone: '🎺',
+    icone: '<i data-lucide="music-2"></i>',
     titulo: 'Bem-vindo ao\nToques de Corneta',
     texto: 'Aprenda a identificar os <strong>15 toques militares</strong> do CEFS A 2026. Cada toque tem um <em>bizu</em> — uma frase que ajuda a memorizar o som.',
     extra: '',
   },
   {
-    icone: '🧠',
+    icone: '<i data-lucide="brain"></i>',
     titulo: 'Treino\ninteligente',
     texto: 'O app usa <strong>repetição espaçada</strong>: toques que você erra voltam mais cedo, enquanto os que você domina aparecem menos.',
     extra: `<div class="ob-niveis">
@@ -906,9 +946,15 @@ const TELAS_ONBOARDING = [
     </div>`,
   },
   {
-    icone: '🎯',
+    icone: '<i data-lucide="target"></i>',
     titulo: 'Dois modos\nde treino',
     texto: '<strong>Modo Clássico:</strong> ouça e identifique o toque.<br><br><strong>Múltipla Escolha:</strong> 4 alternativas com feedback imediato e dica do bizu ao errar.',
+    extra: '',
+  },
+  {
+    icone: '<i data-lucide="info"></i>',
+    titulo: 'Aba\nInformações',
+    texto: 'Na aba <strong>Informações</strong> você encontra configurações do sistema — como ativar ou desativar sons e vibração — e suas <strong>métricas de desempenho</strong> por toque, com histórico de simulados.',
     extra: '',
   },
 ];
@@ -954,9 +1000,10 @@ function renderTelaOnboarding() {
     </div>
     <button class="btn-primary ob-btn"
             onclick="${ultima ? 'concluirOnboarding()' : 'proximaTelaOnboarding()'}">
-      ${ultima ? '🚀 Começar' : 'Próximo →'}
+      ${ultima ? '<i data-lucide="rocket"></i> Começar' : 'Próximo →'}
     </button>
   `;
+  lucide.createIcons();
 }
 
 function proximaTelaOnboarding() {

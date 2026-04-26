@@ -31,9 +31,10 @@
 
 body {
   background: var(--bg);
+  color: var(--text-1);
   display: flex;
   justify-content: center;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .app {
@@ -483,6 +484,14 @@ main {
   color: var(--accent);
   white-space: nowrap;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.badge-srs svg {
+  width: 11px;
+  height: 11px;
 }
 
 /* ONBOARDING */
@@ -560,9 +569,13 @@ main {
 }
 
 .ob-icone {
-  font-size: 64px;
-  line-height: 1;
   margin-bottom: 22px;
+}
+
+.ob-icone svg {
+  width: 64px;
+  height: 64px;
+  color: var(--accent);
 }
 
 .ob-titulo {
@@ -634,9 +647,13 @@ main {
 }
 
 .conquista-icon {
-  font-size: 60px;
-  line-height: 1;
   margin-bottom: 10px;
+}
+
+.conquista-icon svg {
+  width: 60px;
+  height: 60px;
+  color: #f5a623;
 }
 
 .conquista-card h2 {
@@ -1003,6 +1020,14 @@ main {
   font-size: 11px;
   color: #d4570e;
   font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.metrica-sequencia svg {
+  width: 11px;
+  height: 11px;
 }
 
 /* RESUMO DE PROGRESSO */
@@ -1222,5 +1247,63 @@ button:focus-visible {
 [data-theme="dark"] .btn-modo strong      { color: var(--text-1); }
 [data-theme="dark"] .btn-modo span        { color: var(--text-3); }
 [data-theme="dark"] .btn-modo:hover       { border-color: var(--accent); background: var(--accent-bg); }
+
+/* --- MODAL --- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 24px;
+  animation: fadeIn .2s ease;
+}
+
+.modal-card {
+  background: var(--surface);
+  border-radius: 16px;
+  padding: 24px;
+  max-width: 340px;
+  width: 100%;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+}
+
+.modal-mensagem {
+  color: var(--text-1);
+  font-size: 15px;
+  line-height: 1.5;
+  margin: 0 0 20px;
+}
+
+.modal-acoes {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.modal-btn-ok,
+.modal-btn-confirmar {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.modal-btn-cancelar {
+  background: transparent;
+  color: var(--text-2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
 
 }
