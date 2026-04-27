@@ -1,4 +1,4 @@
-const CACHE_NAME = "cefs-cache-v11";
+const CACHE_NAME = "cefs-cache-v12";
 
 const urlsToCache = [
   "/",
@@ -15,15 +15,27 @@ const urlsToCache = [
   "/audios/direita-volver.aac",
   "/audios/esquerda-volver.aac",
   "/audios/meiavolta.aac",
+  "/audios/voltas-volver.aac",
   "/audios/ombro-arma.aac",
   "/audios/descansar-arma.aac",
   "/audios/cruzar-arma.aac",
   "/audios/ordinario-marche.aac",
+  "/audios/marcar-passo.aac",
+  "/audios/acelerado.aac",
+  "/audios/avontade.aac",
+  "/audios/cessar-avontade.aac",
   "/audios/cobrir.aac",
   "/audios/firme.aac",
   "/audios/alto.aac",
+  "/audios/ultima-forma.aac",
+  "/audios/formatura.aac",
+  "/audios/fora-de-forma.aac",
   "/audios/olhar-direita.aac",
-  "/audios/olhar-frente.aac"
+  "/audios/olhar-esquerda.aac",
+  "/audios/olhar-frente.aac",
+  "/audios/bandeira.aac",
+  "/audios/marcha-batida.aac",
+  "/audios/alvorada.aac"
 ];
 
 self.addEventListener("install", event => {
