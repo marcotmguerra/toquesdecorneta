@@ -861,7 +861,7 @@ function mostrarInfo() {
 
       <div class="card info-card">
         <h3>Sobre o App</h3>
-        <p>Este aplicativo foi desenvolvido para auxiliar os alunos do <strong>CEFS A 2026 - Pelotão Delta</strong> na memorização dos toques de corneta militares.</p>
+        <p>Este aplicativo foi desenvolvido para auxiliar os alunos do <strong>Pelotão Delta - CEFS 2026</strong> na memorização dos toques de corneta militares.</p>
         <p>A prática através do simulado ajuda na fixação dos bizus e na agilidade de resposta durante as atividades e na prova.</p>
       </div>
 
@@ -900,8 +900,8 @@ function mostrarInfo() {
       <div class="creditos">
         <p>DESENVOLVIDO POR</p>
         <div class="dev-info">
-          <strong>Pelotão Delta</strong>
-          <p>Versão 2.0.0 (2026)</p>
+          <strong>soulTech</strong>
+          <p>Versão 2.7.3 (2026)</p>
         </div>
         <div class="info-links">
           <a href="#" onclick="event.preventDefault(); localStorage.removeItem('cefs-onboarding'); mostrarOnboarding();">Ver introdução</a>
@@ -942,7 +942,7 @@ const TELAS_ONBOARDING = [
   {
     icone: '<i data-lucide="music-2"></i>',
     titulo: 'Bem-vindo ao\nToques de Corneta',
-    texto: 'Aprenda a identificar os <strong>15 toques militares</strong> do CEFS A 2026. Cada toque tem um <em>bizu</em> — uma frase que ajuda a memorizar o som.',
+    texto: 'Aprenda a identificar os <strong>15 toques de corneta militares</strong>. Cada toque tem um <em>bizu</em> — uma frase que ajuda a memorizar o som.',
     extra: '',
   },
   {
