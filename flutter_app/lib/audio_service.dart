@@ -5,6 +5,7 @@ class AudioService {
   static final AudioService instance = AudioService._();
 
   final AudioPlayer _player = AudioPlayer();
+  final AudioPlayer _fxPlayer = AudioPlayer();
   String? _playingPath;
 
   Future<void> toggle(String assetPath) async {
@@ -22,6 +23,13 @@ class AudioService {
     });
   }
 
+  /// Reproduz um som curto de feedback sem interromper o toque em curso.
+  /// [assetPath] relativo à pasta assets/ (ex: 'sounds/acerto.wav').
+  Future<void> playOnce(String assetPath) async {
+    await _fxPlayer.stop();
+    await _fxPlayer.play(AssetSource(assetPath));
+  }
+
   Future<void> stop() async {
     await _player.stop();
     _playingPath = null;
@@ -32,5 +40,8 @@ class AudioService {
 
   Stream<PlayerState> get stateStream => _player.onPlayerStateChanged;
 
-  void dispose() => _player.dispose();
+  void dispose() {
+    _player.dispose();
+    _fxPlayer.dispose();
+  }
 }

@@ -1,65 +1,70 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 const _accent      = Color(0xFF3B5BFF);
 const _accentDark  = Color(0xFF6B80FF);
 
-ThemeData lightTheme() => ThemeData(
-  useMaterial3: true,
-  colorScheme: ColorScheme.fromSeed(
-    seedColor: _accent,
-    brightness: Brightness.light,
-    primary: _accent,
-    surface: const Color(0xFFFFFFFF),
-  ),
-  scaffoldBackgroundColor: const Color(0xFFF2F2F7),
-  cardColor: Colors.white,
-  fontFamily: 'Inter',
-  textTheme: _textTheme(const Color(0xFF111111), const Color(0xFF555555)),
-  elevatedButtonTheme: _btnTheme(_accent),
-  appBarTheme: const AppBarTheme(
-    backgroundColor: Color(0xFFFFFFFF),
-    foregroundColor: Color(0xFF111111),
-    elevation: 0,
-    surfaceTintColor: Colors.transparent,
-  ),
-  bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-    backgroundColor: Colors.white,
-    selectedItemColor: _accent,
-    unselectedItemColor: Color(0xFFAAAAAA),
-    type: BottomNavigationBarType.fixed,
-    elevation: 0,
-  ),
-  extensions: const [AppColors.light],
-);
+ThemeData lightTheme() {
+  final base = _textTheme(const Color(0xFF111111), const Color(0xFF555555));
+  return ThemeData(
+    useMaterial3: true,
+    colorScheme: ColorScheme.fromSeed(
+      seedColor: _accent,
+      brightness: Brightness.light,
+      primary: _accent,
+      surface: const Color(0xFFFFFFFF),
+    ),
+    scaffoldBackgroundColor: const Color(0xFFF2F2F7),
+    cardColor: Colors.white,
+    textTheme: GoogleFonts.interTextTheme(base),
+    elevatedButtonTheme: _btnTheme(_accent),
+    appBarTheme: const AppBarTheme(
+      backgroundColor: Color(0xFFFFFFFF),
+      foregroundColor: Color(0xFF111111),
+      elevation: 0,
+      surfaceTintColor: Colors.transparent,
+    ),
+    bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+      backgroundColor: Colors.white,
+      selectedItemColor: _accent,
+      unselectedItemColor: Color(0xFFAAAAAA),
+      type: BottomNavigationBarType.fixed,
+      elevation: 0,
+    ),
+    extensions: const [AppColors.light],
+  );
+}
 
-ThemeData darkTheme() => ThemeData(
-  useMaterial3: true,
-  colorScheme: ColorScheme.fromSeed(
-    seedColor: _accentDark,
-    brightness: Brightness.dark,
-    primary: _accentDark,
-    surface: const Color(0xFF1E1E21),
-  ),
-  scaffoldBackgroundColor: const Color(0xFF121214),
-  cardColor: const Color(0xFF1E1E21),
-  fontFamily: 'Inter',
-  textTheme: _textTheme(const Color(0xFFF0F0F3), const Color(0xFF9A9A9F)),
-  elevatedButtonTheme: _btnTheme(_accentDark),
-  appBarTheme: const AppBarTheme(
-    backgroundColor: Color(0xFF1E1E21),
-    foregroundColor: Color(0xFFF0F0F3),
-    elevation: 0,
-    surfaceTintColor: Colors.transparent,
-  ),
-  bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-    backgroundColor: Color(0xFF1E1E21),
-    selectedItemColor: _accentDark,
-    unselectedItemColor: Color(0xFF56565B),
-    type: BottomNavigationBarType.fixed,
-    elevation: 0,
-  ),
-  extensions: const [AppColors.dark],
-);
+ThemeData darkTheme() {
+  final base = _textTheme(const Color(0xFFF0F0F3), const Color(0xFF9A9A9F));
+  return ThemeData(
+    useMaterial3: true,
+    colorScheme: ColorScheme.fromSeed(
+      seedColor: _accentDark,
+      brightness: Brightness.dark,
+      primary: _accentDark,
+      surface: const Color(0xFF1E1E21),
+    ),
+    scaffoldBackgroundColor: const Color(0xFF121214),
+    cardColor: const Color(0xFF1E1E21),
+    textTheme: GoogleFonts.interTextTheme(base),
+    elevatedButtonTheme: _btnTheme(_accentDark),
+    appBarTheme: const AppBarTheme(
+      backgroundColor: Color(0xFF1E1E21),
+      foregroundColor: Color(0xFFF0F0F3),
+      elevation: 0,
+      surfaceTintColor: Colors.transparent,
+    ),
+    bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+      backgroundColor: Color(0xFF1E1E21),
+      selectedItemColor: _accentDark,
+      unselectedItemColor: Color(0xFF56565B),
+      type: BottomNavigationBarType.fixed,
+      elevation: 0,
+    ),
+    extensions: const [AppColors.dark],
+  );
+}
 
 TextTheme _textTheme(Color primary, Color secondary) => TextTheme(
   headlineMedium: TextStyle(color: primary,   fontWeight: FontWeight.w700, fontSize: 20),

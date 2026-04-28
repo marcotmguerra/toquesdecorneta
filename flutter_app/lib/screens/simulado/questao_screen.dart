@@ -126,18 +126,26 @@ Future<void> _vibrar(AppProvider p, List<int> pattern) async {
 }
 
 void _feedbackAcerto(AppProvider p) {
-  if (p.som) HapticFeedback.lightImpact();
+  if (p.som) {
+    HapticFeedback.lightImpact();
+    AudioService.instance.playOnce('sounds/acerto.wav');
+  }
   _vibrar(p, [0, 40]);
 }
 
 void _feedbackErro(AppProvider p) {
-  if (p.som) HapticFeedback.heavyImpact();
+  if (p.som) {
+    HapticFeedback.heavyImpact();
+    AudioService.instance.playOnce('sounds/erro.wav');
+  }
   _vibrar(p, [0, 80, 50, 80]);
 }
 
 // ── Conquista overlay ─────────────────────────────────────────────────────────
 
 void _mostrarConquista(BuildContext context, String nomeToque) {
+  final provider = context.read<AppProvider>();
+  if (provider.som) AudioService.instance.playOnce('sounds/conquista.wav');
   final ctrl = ConfettiController(duration: const Duration(seconds: 3));
   ctrl.play();
   Timer? autoClose;
