@@ -524,15 +524,41 @@ function selecionarModo(modo) {
         <i data-lucide="brain"></i>
         <span>Toques mais fracos e esquecidos aparecem com mais frequência</span>
       </div>
-      <div class="opcoes-simulado">
-        <button class="btn-primary" onclick="iniciarProva(5)">5 questões</button>
-        <button class="btn-primary" onclick="iniciarProva(10)">10 questões</button>
-        <button class="btn-primary" onclick="iniciarProva(${toques.length})">Todas (${toques.length})</button>
-        <button class="btn-secundario" onclick="mostrarSimulado()">← Voltar</button>
+      <div class="quantidade-input-wrapper">
+        <input type="number"
+               id="inputQuantidade"
+               class="quantidade-input"
+               min="1"
+               max="${toques.length}"
+               value="10"
+               placeholder="Ex: 10">
+        <span class="quantidade-max">de ${toques.length}</span>
       </div>
+      <div class="opcoes-simulado opcoes-quantidade">
+        <button class="btn-chip" onclick="definirQuantidade(5)">5</button>
+        <button class="btn-chip" onclick="definirQuantidade(10)">10</button>
+        <button class="btn-chip" onclick="definirQuantidade(${toques.length})">Todas</button>
+      </div>
+      <button class="btn-primary btn-iniciar-prova" onclick="iniciarProvaCustom()">
+        <i data-lucide="play-circle"></i> Iniciar
+      </button>
+      <button class="btn-secundario" onclick="mostrarSimulado()">← Voltar</button>
     </div>
   `;
   lucide.createIcons();
+}
+
+function definirQuantidade(n) {
+  const input = document.getElementById('inputQuantidade');
+  if (input) input.value = n;
+}
+
+function iniciarProvaCustom() {
+  const input = document.getElementById('inputQuantidade');
+  let total = parseInt(input && input.value, 10);
+  if (isNaN(total) || total < 1) total = 1;
+  if (total > toques.length) total = toques.length;
+  iniciarProva(total);
 }
 
 function iniciarProva(total) {
@@ -942,7 +968,7 @@ const TELAS_ONBOARDING = [
   {
     icone: '<i data-lucide="music-2"></i>',
     titulo: 'Bem-vindo ao\nToques de Corneta',
-    texto: 'Aprenda a identificar os <strong>15 toques de corneta militares</strong>. Cada toque tem um <em>bizu</em> — uma frase que ajuda a memorizar o som.',
+    texto: 'Aprenda a identificar os mais comuns <strong> toques de corneta militares</strong>. Cada toque tem um <em>bizu</em> — uma frase que ajuda a memorizar o som.',
     extra: '',
   },
   {

@@ -843,6 +843,73 @@ main {
   gap: 12px;
 }
 
+.quantidade-input-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 8px 0 12px;
+}
+
+.quantidade-input {
+  width: 90px;
+  padding: 10px 12px;
+  font-size: 1.4rem;
+  font-weight: 700;
+  text-align: center;
+  border: 2px solid var(--accent);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--text-1);
+  outline: none;
+  -moz-appearance: textfield;
+}
+
+.quantidade-input::-webkit-outer-spin-button,
+.quantidade-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  appearance: none;
+  margin: 0;
+}
+
+.quantidade-input:focus {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent);
+}
+
+.quantidade-max {
+  font-size: 0.9rem;
+  color: var(--text-2);
+  white-space: nowrap;
+}
+
+.opcoes-quantidade {
+  flex-direction: row !important;
+  justify-content: center;
+  gap: 8px !important;
+  margin-bottom: 16px;
+}
+
+.btn-chip {
+  padding: 6px 18px;
+  border-radius: 20px;
+  border: 2px solid var(--accent);
+  background: transparent;
+  color: var(--accent);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s, color .15s;
+}
+
+.btn-chip:active {
+  background: var(--accent);
+  color: #fff;
+}
+
+.btn-iniciar-prova {
+  margin-bottom: 12px;
+}
+
 /* BOTÃO DE MODO */
 
 .btn-modo {
