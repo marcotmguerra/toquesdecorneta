@@ -1,0 +1,29 @@
+name: toques_de_corneta
+description: "Toques de Corneta — app de treino para o Pelotão Delta CEFS 2026"
+publish_to: 'none'
+version: 2.7.3+1
+
+environment:
+  sdk: ^3.11.3
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  audioplayers: ^6.1.0
+  shared_preferences: ^2.3.5
+  provider: ^6.1.2
+  confetti: ^0.7.0
+  vibration: ^2.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/audios/
+    - assets/images/
