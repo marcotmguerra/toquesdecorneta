@@ -214,6 +214,10 @@ main {
   margin-bottom: 20px;
 }
 
+.prova-card > p {
+  color: var(--text-1);
+}
+
 /* MENU FIXO */
 
 .bottom-nav {
