@@ -12,21 +12,21 @@ O app é funcional e bem estruturado tecnicamente, mas visualmente genérico. Os
 | Elemento        | Estado atual              | Problema                                            |
 |-----------------|---------------------------|-----------------------------------------------------|
 | Tipografia      | `Inter`                   | Fonte proibida — "generic AI slop aesthetic"        |
-| Cor de acento   | `#3b5bff` (azul genérico) | Clichê, sem relação com o contexto militar          |
+| Cor de acento   | `#3b5bff` (azul genérico) | Clichê, sem relação com o contexto operacional     |
 | Cards           | Estilo iOS padrão         | Previsível, sem caráter próprio                     |
 | Fundo           | Cor sólida flat           | Sem profundidade, atmosfera ou textura              |
 | Animações       | fadeIn + slideUp básico   | Sem impacto, espalhadas sem intenção                |
-| Identidade      | Nenhuma                   | App militar sem nenhuma referência visual ao contexto |
+| Identidade      | Nenhuma                   | App de toques sem referência visual ao contexto    |
 
 ---
 
 ## Direção Estética: "Ordem do Dia"
 
-**Conceito:** Design editorial-militar. A estética de um manual técnico das Forças Armadas reinterpretado com precisão gráfica moderna. Estrutura rígida, tipografia de autoridade, paleta de couro, bronze e verde-oliva.
+**Conceito:** Design operacional-neutro. Estrutura de manual técnico reinterpretada com precisão gráfica moderna. Funciona para Bombeiros, Polícia e Exército sem favorecer nenhuma corporação — como um documento de protocolo que pertence a todos.
 
 **Tom:** Utilitarian-refined. Não é brutalismo cru nem minimalismo vazio — é disciplina com intenção. Cada elemento tem um posto.
 
-**O que torna inesquecível:** O contraste entre a fonte display stencil nos títulos e a limpeza geométrica do corpo. O usuário sente que está usando uma ferramenta séria, não um quiz de apps de estudar.
+**O que torna inesquecível:** O contraste entre a fonte display stencil nos títulos e a limpeza geométrica do corpo. O usuário sente que está usando uma ferramenta séria e institucional, não um quiz genérico de estudos.
 
 ---
 
@@ -77,71 +77,74 @@ Sentido                   ← DM Sans 600, 17px
 ## 2. Paleta de Cores
 
 ### Problema atual
-Azul `#3b5bff` não tem relação com o contexto militar e é a cor de acento padrão de dezenas de apps. A paleta atual poderia ser de qualquer app.
+Azul `#3b5bff` não tem relação com o contexto e é a cor de acento padrão de dezenas de apps. A paleta atual poderia ser de qualquer app.
 
-### Proposta — Paleta "Corneta"
+### Contexto: múltiplas forças
+O app é utilizado por **Bombeiros, Polícia e Exército**. Cada força tem suas próprias cores institucionais (vermelho, azul, verde), portanto a paleta deve ser **neutra e profissional** — autoritária sem pertencer a nenhuma corporação específica.
+
+### Proposta — Paleta "Neutro Operacional"
 
 ```css
 :root {
   /* Fundos */
-  --bg:        #f4f1ea;   /* Pergaminho — quente, não frio */
-  --surface:   #fffdf8;   /* Off-white levemente amarelado */
+  --bg:        #f2f3f5;   /* Cinza frio neutro */
+  --surface:   #ffffff;
 
   /* Textos */
-  --text-1:    #1c1a14;   /* Quase preto com tom sépia */
-  --text-2:    #5c5640;   /* Marrom médio */
-  --text-3:    #a09880;   /* Cinza-sépia para textos terciários */
+  --text-1:    #111318;   /* Quase preto neutro */
+  --text-2:    #4b5263;   /* Cinza-azulado médio */
+  --text-3:    #9099aa;   /* Cinza claro para textos terciários */
 
   /* Bordas */
-  --border:    #ddd8c8;
-  --divider:   #ede9df;
+  --border:    #dde1e9;
+  --divider:   #eceef2;
 
-  /* Acento principal — Bronze/Latão */
-  --accent:    #b8860b;   /* Dourado militar (dark goldenrod) */
-  --accent-bg: #f5edd6;   /* Fundo claro do acento */
+  /* Acento principal — Slate profissional */
+  --accent:    #3d5a80;   /* Azul-ardósia: sóbrio, não corporativo */
+  --accent-bg: #e8edf5;
 
-  /* Sucesso — Verde oliva */
-  --success:   #3d6b35;
-  --success-bg:#d6e8d4;
+  /* Sucesso */
+  --success:   #1e6b45;
+  --success-bg:#d4ede1;
 
-  /* Alerta — Terracota */
-  --warning:   #8b4513;
-  --warning-bg:#f5dece;
+  /* Alerta */
+  --warning:   #7a5200;
+  --warning-bg:#fef3d0;
 
-  /* Erro — Vermelho caqui */
-  --danger:    #8b1a1a;
-  --danger-bg: #f5d5d5;
+  /* Erro */
+  --danger:    #8b1e2a;
+  --danger-bg: #fde8ea;
 }
 
 [data-theme="dark"] {
-  --bg:        #161510;   /* Preto-oliva profundo */
-  --surface:   #1e1c14;   /* Verde-oliva escuro */
+  --bg:        #13151a;   /* Preto-carvão neutro */
+  --surface:   #1c1f27;
 
-  --text-1:    #e8e0cc;   /* Creme envelhecido */
-  --text-2:    #9a9070;
-  --text-3:    #5a5440;
+  --text-1:    #e8eaf0;
+  --text-2:    #8b91a0;
+  --text-3:    #52576a;
 
-  --border:    #3a3620;
-  --divider:   #2a2818;
+  --border:    #2c3040;
+  --divider:   #232635;
 
-  --accent:    #d4a017;   /* Bronze mais brilhante no escuro */
-  --accent-bg: #2a2210;
+  --accent:    #5b7fa6;   /* Slate mais claro no escuro */
+  --accent-bg: #1a2233;
 
-  --success:   #4a8b40;
-  --success-bg:#0d2010;
+  --success:   #2e9462;
+  --success-bg:#0d2518;
 
-  --warning:   #c87040;
-  --warning-bg:#2a1800;
+  --warning:   #c49a00;
+  --warning-bg:#251e00;
 
-  --danger:    #c04040;
-  --danger-bg: #2a0808;
+  --danger:    #c0394a;
+  --danger-bg: #280d10;
 }
 ```
 
 **Lógica da paleta:**
-- O fundo pergaminho (`#f4f1ea`) evoca papel de manual militar, documentos oficiais — não a frieza de um app tech.
-- O bronze (`#b8860b`) é a cor das insígnias e instrumentos de sopro (cornetas são feitas de latão). É o acento natural do contexto.
-- O verde-oliva no tema escuro remete ao uniforme, não ao "dark mode genérico".
+- O acento **slate** (`#3d5a80`) é neutro — não é o azul da Polícia Militar, não é o verde do Exército, não é o vermelho do Corpo de Bombeiros. É uma cor de autoridade e confiança sem identidade institucional.
+- Os fundos em **cinza frio neutro** funcionam como "uniforme" para qualquer força.
+- As cores de sucesso/alerta/erro são funcionais (verde, amarelo, vermelho) sem carga simbólica específica de nenhuma corporação.
 
 ---
 
@@ -300,7 +303,8 @@ conteudo.style.animation = '';
 
 ```javascript
 // Substituir as cores atuais no iniciarConfetti()
-const cores = ['#b8860b', '#3d6b35', '#c87040', '#1c1a14', '#d4a017', '#8b4513'];
+// Neutras: slate, cinza-azulado, branco gelo, preto-carvão, verde-sucesso, amarelo-alerta
+const cores = ['#3d5a80', '#5b7fa6', '#e8eaf0', '#111318', '#1e6b45', '#c49a00'];
 ```
 
 ---
@@ -406,9 +410,9 @@ A barra inferior tem estilo iOS genérico com borda superior reta. Não há trat
 ## 8. Badges de Domínio
 
 ### Problema atual
-Os badges `Aprendendo`, `Bom`, `Dominado` usam cores genéricas (azul, amarelo, verde) sem relação com uma escala de progressão militar.
+Os badges `Aprendendo`, `Bom`, `Dominado` usam cores hardcoded (azul, amarelo, verde) fora do sistema de variáveis CSS — quebram no tema escuro.
 
-### Proposta — Referência a patentes/rank
+### Proposta — Progressão por variáveis do tema
 
 ```css
 /* Renomear visual mantendo os textos atuais */
@@ -431,13 +435,13 @@ Os badges `Aprendendo`, `Bom`, `Dominado` usam cores genéricas (azul, amarelo, 
 .badge-bom {
   background: var(--warning-bg);
   border-color: var(--warning);
-  color: var(--warning);       /* terracota — em progresso */
+  color: var(--warning);       /* amarelo-âmbar — em progresso */
 }
 
 .badge-dominado {
   background: var(--success-bg);
   border-color: var(--success);
-  color: var(--success);       /* verde-oliva — conquistado */
+  color: var(--success);       /* verde-sucesso — conquistado */
 }
 ```
 
@@ -566,7 +570,7 @@ O card tem `background: white` hardcoded e `color: #1a7a35` fixo — quebra no t
 }
 
 .conquista-icon svg {
-  color: var(--accent);   /* bronze, não laranja genérico */
+  color: var(--accent);   /* slate profissional, não laranja genérico */
 }
 ```
 
