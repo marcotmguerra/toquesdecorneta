@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 const _accent      = Color(0xFF3B5BFF);
 const _accentDark  = Color(0xFF6B80FF);
@@ -13,7 +14,7 @@ ThemeData lightTheme() => ThemeData(
   ),
   scaffoldBackgroundColor: const Color(0xFFF2F2F7),
   cardColor: Colors.white,
-  fontFamily: 'Inter',
+  fontFamily: GoogleFonts.inter().fontFamily,
   textTheme: _textTheme(const Color(0xFF111111), const Color(0xFF555555)),
   elevatedButtonTheme: _btnTheme(_accent),
   appBarTheme: const AppBarTheme(
@@ -41,7 +42,7 @@ ThemeData darkTheme() => ThemeData(
   ),
   scaffoldBackgroundColor: const Color(0xFF121214),
   cardColor: const Color(0xFF1E1E21),
-  fontFamily: 'Inter',
+  fontFamily: GoogleFonts.inter().fontFamily,
   textTheme: _textTheme(const Color(0xFFF0F0F3), const Color(0xFF9A9A9F)),
   elevatedButtonTheme: _btnTheme(_accentDark),
   appBarTheme: const AppBarTheme(

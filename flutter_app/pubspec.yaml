@@ -15,11 +15,13 @@ dependencies:
   provider: ^6.1.2
   confetti: ^0.7.0
   vibration: ^2.0.0
+  google_fonts: ^6.2.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.14.1
 
 flutter:
   uses-material-design: true
@@ -27,3 +29,11 @@ flutter:
   assets:
     - assets/audios/
     - assets/images/
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/icon.png"
+  adaptive_icon_background: "#121214"
+  adaptive_icon_foreground: "assets/images/icon.png"
+  min_sdk_android: 21
