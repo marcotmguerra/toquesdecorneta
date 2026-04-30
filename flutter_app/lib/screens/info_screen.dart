@@ -72,36 +72,42 @@ class InfoScreen extends StatelessWidget {
 
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-          child: Container(
-            padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
-              color: const Color(0xFFFFF3CD),
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: const Color(0xFFFFD700).withValues(alpha: 0.5)),
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Icon(Icons.warning_amber, color: Color(0xFFF5A623), size: 22),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      Text('Aviso de Estudo',
-                          style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14, color: Colors.black87)),
-                      SizedBox(height: 4),
-                      Text(
-                        'Esta ferramenta é para fins educacionais. Os toques seguem o padrão '
-                        'regulamentar, mas sempre consulte o instrutor do seu pelotão.',
-                        style: TextStyle(fontSize: 13, color: Colors.black87, height: 1.4),
-                      ),
-                    ],
+          child: Builder(builder: (ctx) {
+            final dark = ctx.isDark;
+            final warnBg     = dark ? const Color(0xFF1F1900) : const Color(0xFFFFF3CD);
+            final warnBorder = dark ? const Color(0xFF4A3800) : const Color(0xFFFFD700).withValues(alpha: 0.5);
+            final warnText   = dark ? const Color(0xFFE0B050) : Colors.black87;
+            return Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: warnBg,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: warnBorder),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Icon(Icons.warning_amber, color: Color(0xFFF5A623), size: 22),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Aviso de Estudo',
+                            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14, color: warnText)),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Esta ferramenta é para fins educacionais. Os toques seguem o padrão '
+                          'regulamentar, mas sempre consulte o instrutor do seu pelotão.',
+                          style: TextStyle(fontSize: 13, color: warnText, height: 1.4),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ),
+                ],
+              ),
+            );
+          }),
         ),
 
         Padding(

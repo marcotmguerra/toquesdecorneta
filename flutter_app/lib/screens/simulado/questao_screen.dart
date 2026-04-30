@@ -9,7 +9,6 @@ import '../../data/toque.dart';
 import '../../providers/app_provider.dart';
 import '../../theme.dart';
 import '../../widgets/app_card.dart';
-import 'simulado_screen.dart';
 
 // ── Entry point ───────────────────────────────────────────────────────────────
 
@@ -138,6 +137,7 @@ void _feedbackErro(AppProvider p) {
 // ── Conquista overlay ─────────────────────────────────────────────────────────
 
 void _mostrarConquista(BuildContext context, String nomeToque) {
+  final ac = context.ac;
   final ctrl = ConfettiController(duration: const Duration(seconds: 3));
   ctrl.play();
   Timer? autoClose;
@@ -169,7 +169,7 @@ void _mostrarConquista(BuildContext context, String nomeToque) {
                 margin: const EdgeInsets.all(32),
                 padding: const EdgeInsets.all(28),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: ac.surface,
                   borderRadius: BorderRadius.circular(24),
                 ),
                 child: Column(
@@ -177,18 +177,18 @@ void _mostrarConquista(BuildContext context, String nomeToque) {
                   children: [
                     const Icon(Icons.emoji_events, color: Color(0xFFF5A623), size: 56),
                     const SizedBox(height: 12),
-                    const Text('Dominado!',
+                    Text('Dominado!',
                         style: TextStyle(
                             fontWeight: FontWeight.w800,
                             fontSize: 24,
-                            color: Color(0xFF111111))),
+                            color: ac.text1)),
                     const SizedBox(height: 6),
                     Text('$nomeToque está dominado',
                         textAlign: TextAlign.center,
-                        style: const TextStyle(fontSize: 15, color: Color(0xFF555555))),
+                        style: TextStyle(fontSize: 15, color: ac.text2)),
                     const SizedBox(height: 12),
-                    const Text('Toque para continuar',
-                        style: TextStyle(fontSize: 12, color: Color(0xFFAAAAAA))),
+                    Text('Toque para continuar',
+                        style: TextStyle(fontSize: 12, color: ac.text3)),
                   ],
                 ),
               ),
@@ -400,6 +400,7 @@ class _QuestaoMCScreenState extends State<_QuestaoMCScreen> {
 
     final toque = provider.toqueAtual!;
     final ac = context.ac;
+    final isDark = context.isDark;
 
     return Scaffold(
       appBar: AppBar(
@@ -446,7 +447,7 @@ class _QuestaoMCScreenState extends State<_QuestaoMCScreen> {
                         Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFFFF9C4),
+                            color: isDark ? const Color(0xFF1F1900) : const Color(0xFFFFF9C4),
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: Row(
@@ -458,14 +459,14 @@ class _QuestaoMCScreenState extends State<_QuestaoMCScreen> {
                                 child: Text.rich(TextSpan(children: [
                                   TextSpan(
                                       text: '${toque.nome}: ',
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                           fontWeight: FontWeight.w700,
-                                          color: Colors.black87)),
+                                          color: isDark ? const Color(0xFFE0C070) : Colors.black87)),
                                   TextSpan(
                                       text: '"${toque.bizu}"',
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                           fontStyle: FontStyle.italic,
-                                          color: Colors.black87)),
+                                          color: isDark ? const Color(0xFFE0C070) : Colors.black87)),
                                 ])),
                               ),
                             ],
@@ -623,11 +624,7 @@ class ResultadoScreen extends StatelessWidget {
                   width: double.infinity,
                   height: 52,
                   child: ElevatedButton(
-                    onPressed: () => Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(builder: (_) => const SimuladoScreen()),
-                      (r) => r.isFirst,
-                    ),
+                    onPressed: () => Navigator.of(context).popUntil((r) => r.isFirst),
                     child: const Text('Novo Simulado'),
                   ),
                 ),
@@ -685,10 +682,6 @@ class _RevisaoErrosScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Revisão de Erros',
-                    style: TextStyle(
-                        fontWeight: FontWeight.w700, fontSize: 20, color: ac.text1)),
-                const SizedBox(height: 4),
                 Text('${lista.length} toque(s) para praticar — ouça antes de começar',
                     style: TextStyle(color: ac.text2, fontSize: 13)),
                 const SizedBox(height: 16),
@@ -712,11 +705,7 @@ class _RevisaoErrosScreen extends StatelessWidget {
                   width: double.infinity,
                   height: 46,
                   child: OutlinedButton(
-                    onPressed: () => Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(builder: (_) => const SimuladoScreen()),
-                      (r) => r.isFirst,
-                    ),
+                    onPressed: () => Navigator.of(context).popUntil((r) => r.isFirst),
                     child: const Text('Voltar ao início'),
                   ),
                 ),

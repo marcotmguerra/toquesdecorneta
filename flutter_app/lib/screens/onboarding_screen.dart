@@ -43,6 +43,13 @@ class OnboardingScreen extends StatefulWidget {
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
   int _page = 0;
+  late final PageController _ctrl = PageController();
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
 
   void _concluir() async {
     await context.read<Storage>().concluirOnboarding();
@@ -56,17 +63,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     final ac = context.ac;
-    final slide = _slides[_page];
     final isLast = _page == _slides.length - 1;
 
     return Scaffold(
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            children: [
-              // Header: dots + skip
-              Row(
+        child: Column(
+          children: [
+            // Header: dots + skip
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Row(
@@ -88,70 +94,81 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     ),
                 ],
               ),
+            ),
 
-              const Spacer(),
-
-              // Icon
-              Container(
-                width: 100, height: 100,
-                decoration: BoxDecoration(
-                  color: ac.accentBg,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(slide.icon, size: 48, color: ac.accent),
-              ),
-
-              const SizedBox(height: 32),
-
-              // Title
-              Text(
-                slide.titulo,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 26, fontWeight: FontWeight.w700,
-                  color: ac.text1, height: 1.25,
-                ),
-              ),
-
-              const SizedBox(height: 16),
-
-              // Body text
-              Text(
-                slide.texto,
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 15, color: ac.text2, height: 1.5),
-              ),
-
-              // Domain badges on slide 2
-              if (_page == 1) ...[
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    _Badge('Aprendendo', ac.badgeAprendendo),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 6),
-                      child: Icon(Icons.arrow_forward, size: 16),
+            // Slides
+            Expanded(
+              child: PageView.builder(
+                controller: _ctrl,
+                onPageChanged: (i) => setState(() => _page = i),
+                itemCount: _slides.length,
+                itemBuilder: (_, i) {
+                  final slide = _slides[i];
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: 100, height: 100,
+                          decoration: BoxDecoration(
+                            color: ac.accentBg,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(slide.icon, size: 48, color: ac.accent),
+                        ),
+                        const SizedBox(height: 32),
+                        Text(
+                          slide.titulo,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 26, fontWeight: FontWeight.w700,
+                            color: ac.text1, height: 1.25,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          slide.texto,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 15, color: ac.text2, height: 1.5),
+                        ),
+                        if (i == 1) ...[
+                          const SizedBox(height: 20),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              _Badge('Aprendendo', ac.badgeAprendendo),
+                              const Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 6),
+                                child: Icon(Icons.arrow_forward, size: 16),
+                              ),
+                              _Badge('Bom', ac.badgeBom),
+                              const Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 6),
+                                child: Icon(Icons.arrow_forward, size: 16),
+                              ),
+                              _Badge('Dominado', ac.badgeDominado),
+                            ],
+                          ),
+                        ],
+                      ],
                     ),
-                    _Badge('Bom', ac.badgeBom),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 6),
-                      child: Icon(Icons.arrow_forward, size: 16),
-                    ),
-                    _Badge('Dominado', ac.badgeDominado),
-                  ],
-                ),
-              ],
+                  );
+                },
+              ),
+            ),
 
-              const Spacer(),
-
-              // Button
-              SizedBox(
+            // Button
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
+              child: SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: isLast
                       ? _concluir
-                      : () => setState(() => _page++),
+                      : () => _ctrl.nextPage(
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeInOut),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -162,8 +179,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   ),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

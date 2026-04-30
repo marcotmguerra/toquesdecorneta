@@ -74,19 +74,14 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       body: tabs[_tab],
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          border: Border(top: BorderSide(color: ac.border, width: 1)),
-        ),
-        child: BottomNavigationBar(
-          currentIndex: _tab,
-          onTap: _tentarTrocarAba,
-          items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.music_note_outlined), label: 'Toques'),
-            BottomNavigationBarItem(icon: Icon(Icons.assignment_outlined),  label: 'Simulado'),
-            BottomNavigationBarItem(icon: Icon(Icons.info_outline),         label: 'Informações'),
-          ],
-        ),
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: _tab,
+        onDestinationSelected: _tentarTrocarAba,
+        destinations: const [
+          NavigationDestination(icon: Icon(Icons.music_note_outlined), label: 'Toques'),
+          NavigationDestination(icon: Icon(Icons.assignment_outlined),  label: 'Simulado'),
+          NavigationDestination(icon: Icon(Icons.info_outline),         label: 'Informações'),
+        ],
       ),
     );
   }

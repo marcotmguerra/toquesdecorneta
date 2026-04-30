@@ -22,12 +22,11 @@ ThemeData lightTheme() => ThemeData(
     elevation: 0,
     surfaceTintColor: Colors.transparent,
   ),
-  bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+  navigationBarTheme: NavigationBarThemeData(
     backgroundColor: Colors.white,
-    selectedItemColor: _accent,
-    unselectedItemColor: Color(0xFFAAAAAA),
-    type: BottomNavigationBarType.fixed,
+    indicatorColor: _accent.withValues(alpha: 0.12),
     elevation: 0,
+    labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
   ),
   extensions: const [AppColors.light],
 );
@@ -51,12 +50,11 @@ ThemeData darkTheme() => ThemeData(
     elevation: 0,
     surfaceTintColor: Colors.transparent,
   ),
-  bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-    backgroundColor: Color(0xFF1E1E21),
-    selectedItemColor: _accentDark,
-    unselectedItemColor: Color(0xFF56565B),
-    type: BottomNavigationBarType.fixed,
+  navigationBarTheme: NavigationBarThemeData(
+    backgroundColor: const Color(0xFF1E1E21),
+    indicatorColor: _accentDark.withValues(alpha: 0.2),
     elevation: 0,
+    labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
   ),
   extensions: const [AppColors.dark],
 );
