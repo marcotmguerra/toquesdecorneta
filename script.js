@@ -30,6 +30,15 @@ const toques = [
 
 const conteudo = document.getElementById("conteudo");
 
+const ICON_CORNETA = `<svg class="icon-corneta" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <path d="M4 20 Q8 16 14 16 L22 16 Q26 14 28 10" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M28 10 Q32 8 30 4 Q26 2 24 8 L22 16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="4" cy="20" r="3" stroke="currentColor" stroke-width="2"/>
+  <circle cx="16" cy="13" r="1.5" fill="currentColor"/>
+  <circle cx="19" cy="13" r="1.5" fill="currentColor"/>
+  <circle cx="22" cy="13" r="1.5" fill="currentColor"/>
+</svg>`;
+
 let provaAtual = [];
 let indiceAtual = 0;
 let acertos = 0;
@@ -89,12 +98,21 @@ function setBotao(botao, icone, texto, desabilitado) {
   lucide.createIcons();
 }
 
+function pararPulso(botao) {
+  if (botao) botao.classList.remove('tocando');
+}
+
+function iniciarPulso(botao) {
+  if (botao) botao.classList.add('tocando');
+}
+
 function tocarAudio(caminho, botao) {
   if (botaoAtual === botao && audioAtual && !audioAtual.paused) {
     audioAtual.pause();
     audioAtual.currentTime = 0;
     audioAtual = null;
     setBotao(botao, "play", "Reproduzir", false);
+    pararPulso(botao);
     botaoAtual = null;
     return;
   }
@@ -106,6 +124,7 @@ function tocarAudio(caminho, botao) {
 
   if (botaoAtual && botaoAtual !== botao) {
     setBotao(botaoAtual, "play", "Reproduzir", false);
+    pararPulso(botaoAtual);
   }
 
   botaoAtual = botao || null;
@@ -115,16 +134,22 @@ function tocarAudio(caminho, botao) {
 
   function onReady() {
     setBotao(botao, "square", "Reproduzindo...", false);
-    audioAtual.play().catch(() => setBotao(botao, "play", "Reproduzir", false));
+    iniciarPulso(botao);
+    audioAtual.play().catch(() => {
+      setBotao(botao, "play", "Reproduzir", false);
+      pararPulso(botao);
+    });
   }
 
   audioAtual.addEventListener("ended", () => {
     setBotao(botao, "play", "Reproduzir", false);
+    pararPulso(botao);
     botaoAtual = null;
   }, { once: true });
 
   audioAtual.addEventListener("error", () => {
     setBotao(botao, "play", "Reproduzir", false);
+    pararPulso(botao);
     botaoAtual = null;
     mostrarModal("Não foi possível carregar o áudio. Verifique sua conexão ou reinstale o app.");
   }, { once: true });
@@ -221,7 +246,7 @@ function iniciarConfetti(canvas) {
   canvas.width  = window.innerWidth;
   canvas.height = window.innerHeight;
 
-  const cores = ['#3b5bff', '#2ecc71', '#f5c542', '#ff6b35', '#e74c3c', '#9b59b6'];
+  const cores = ['#3d5a80', '#5b7fa6', '#e8eaf0', '#111318', '#1e6b45', '#c49a00'];
   const particulas = Array.from({ length: 90 }, () => ({
     x:      Math.random() * canvas.width,
     y:      Math.random() * canvas.height - canvas.height,
@@ -371,6 +396,12 @@ function selecionarToquesPonderados(total) {
 
 // --- UTILITÁRIOS ---
 
+function animarConteudo() {
+  conteudo.style.animation = 'none';
+  conteudo.offsetHeight; // reflow forçado para reiniciar a animação CSS
+  conteudo.style.animation = '';
+}
+
 function embaralhar(array) {
   const arr = [...array];
   for (let i = arr.length - 1; i > 0; i--) {
@@ -439,9 +470,10 @@ function renderResumoProgresso() {
 
 function mostrarLista() {
   setNavAtiva("lista");
+  animarConteudo();
   conteudo.innerHTML = "";
 
-  toques.forEach(t => {
+  toques.forEach((t, index) => {
     const m = getMetricaToque(t.id);
     const total = m.acertos + m.erros;
     const taxa = total > 0 ? Math.round((m.acertos / total) * 100) : null;
@@ -457,10 +489,11 @@ function mostrarLista() {
     `;
 
     const card = document.createElement("div");
-    card.className = "card";
+    card.className = "card card-stagger";
+    card.style.animationDelay = `${index * 0.05}s`;
     card.innerHTML = `
       <div class="card-top">
-        <div class="card-icon"><i data-lucide="music-2"></i></div>
+        <div class="card-icon">${ICON_CORNETA}</div>
         <div class="card-text">
           <h2>${t.nome}</h2>
           ${t.bizu ? `<small>${t.bizu}</small>` : ''}
@@ -486,6 +519,7 @@ function mostrarLista() {
 function mostrarSimulado() {
   setNavAtiva("simulado");
   resetarProva();
+  animarConteudo();
 
   conteudo.innerHTML = `
     <div class="card prova-card">
@@ -515,6 +549,7 @@ function mostrarSimulado() {
 function selecionarModo(modo) {
   modoAtual = modo;
   const titulo = modo === 'multipla' ? 'Múltipla Escolha' : 'Modo Clássico';
+  animarConteudo();
 
   conteudo.innerHTML = `
     <div class="card prova-card">
@@ -578,6 +613,7 @@ function iniciarProvaComErros() {
 }
 
 function mostrarQuestao() {
+  animarConteudo();
   const toque = provaAtual[indiceAtual];
   const total = provaAtual.length;
   const progresso = (indiceAtual / total) * 100;
@@ -607,6 +643,7 @@ function mostrarQuestao() {
 }
 
 function mostrarQuestaoMC() {
+  animarConteudo();
   const toque = provaAtual[indiceAtual];
   const total = provaAtual.length;
   const progresso = (indiceAtual / total) * 100;
@@ -694,6 +731,7 @@ function responderMC(acertou, botaoClicado) {
 }
 
 function mostrarResposta() {
+  animarConteudo();
   const toque = provaAtual[indiceAtual];
   const total = provaAtual.length;
   const progresso = (indiceAtual / total) * 100;
@@ -763,6 +801,7 @@ function responder(acertou) {
 }
 
 function mostrarResultado() {
+  animarConteudo();
   const total = provaAtual.length;
   const percentual = Math.round((acertos / total) * 100);
 
@@ -805,6 +844,7 @@ function mostrarResultado() {
 }
 
 function mostrarRevisaoErros() {
+  animarConteudo();
   const lista = [...erros];
 
   const itensHTML = lista.map(t => `
@@ -868,6 +908,7 @@ function renderHistorico() {
 
 function mostrarInfo() {
   setNavAtiva("info");
+  animarConteudo();
 
   conteudo.innerHTML = `
     <div class="info-container">

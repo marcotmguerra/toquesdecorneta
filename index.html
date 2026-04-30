@@ -10,8 +10,8 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" media="print" onload="this.media='all'">
-  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"></noscript>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap"></noscript>
 </head>
 <body>
 
@@ -28,7 +28,16 @@
 
     <nav class="bottom-nav" role="navigation" aria-label="Menu principal">
       <button data-aba="lista" onclick="navegarPara(mostrarLista)">
-        <span class="nav-icon"><i data-lucide="music-2"></i></span>
+        <span class="nav-icon">
+          <svg class="icon-corneta" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M4 20 Q8 16 14 16 L22 16 Q26 14 28 10" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M28 10 Q32 8 30 4 Q26 2 24 8 L22 16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="4" cy="20" r="3" stroke="currentColor" stroke-width="2"/>
+            <circle cx="16" cy="13" r="1.5" fill="currentColor"/>
+            <circle cx="19" cy="13" r="1.5" fill="currentColor"/>
+            <circle cx="22" cy="13" r="1.5" fill="currentColor"/>
+          </svg>
+        </span>
         <span class="nav-label">Toques</span>
       </button>
       <button data-aba="simulado" onclick="navegarPara(mostrarSimulado)">
